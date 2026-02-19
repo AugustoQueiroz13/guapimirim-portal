@@ -1,0 +1,30 @@
+# --- BACKEND (Django) ---
+venv/
+.env
+db.sqlite3
+*.pyc
+__pycache__/
+media/
+static_root/
+.python-version
+
+# --- FRONTEND (Next.js) ---
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.pnp
+frontend/.pnp.*
+frontend/.yarn/*
+!frontend/.yarn/patches
+!frontend/.yarn/plugins
+!frontend/.yarn/releases
+!frontend/.yarn/versions
+
+# --- GERAL ---
+.DS_Store
+*.pem
+*.log
+.vercel
+*.tsbuildinfo
+next-env.d.ts
