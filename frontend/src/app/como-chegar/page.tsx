@@ -50,7 +50,7 @@ export default function ComoChegarPage() {
                 <header className="relative bg-[#1B3022] pt-48 pb-40 rounded-b-[4rem] shadow-2xl overflow-hidden text-center">
                     <div className="absolute inset-0 z-0">
                         <img
-                            src="https://odia.ig.com.br/_midias/jpg/2024/07/17/1200x750/1_br116_guapimirim_radar_prf-33449717.jpg"
+                            src="/comochegar.jpg"
                             className="w-full h-full object-cover object-center opacity-50 mix-blend-overlay scale-105"
                             alt="BR-116 Guapimirim"
                         />
@@ -269,6 +269,8 @@ export default function ComoChegarPage() {
                                     <DirectLine icon={<Bus />} title="Duque de Caxias" line="576I (Viação Reginas)" />
                                     <DirectLine icon={<Train />} title="Saracuruna" line="Ramal Guapimirim (Supervia)" />
                                     <DirectLine icon={<Bus />} title="Teresópolis" line="Viação Teresópolis" />
+                                    <DirectLine icon={<Bus />} title="Cachoeiras de Macacu" line="MB15 (Viação Reginas)" />
+                                    <DirectLine icon={<Bus />} title="Magé" line="800i (Viação Reginas)" />
                                 </div>
                             </div>
                         </div>

@@ -4,14 +4,13 @@ import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import {
-    Utensils, Coffee, Pizza, Beer, MapPin, Phone,
+    Utensils, Coffee, Pizza, Beer, MapPin, Phone, Clock,
     MessageCircle, ArrowLeft, Bike, Leaf, LayoutGrid,
-    Sandwich, IceCream, Store // Adicionados IceCream e Store
+    Sandwich, IceCream, Store
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Interface baseada no seu models.py de Gastronomia
 interface Restaurante {
     id: number;
     nome: string;
@@ -21,6 +20,7 @@ interface Restaurante {
     bairro: string;
     endereco: string;
     telefone: string;
+    horario?: string;
     delivery: boolean;
     vegano_vegetariano: boolean;
 }
@@ -30,7 +30,6 @@ export default function GastronomiaPage() {
     const [loading, setLoading] = useState(true);
     const [filtro, setFiltro] = useState("TODOS");
 
-    // Função para embaralhar (Fisher-Yates)
     function shuffleArray(array: Restaurante[]) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -45,8 +44,6 @@ export default function GastronomiaPage() {
                 const response = await fetch('http://127.0.0.1:8000/api/gastronomia/');
                 if (!response.ok) throw new Error('Erro ao buscar dados');
                 const data = await response.json();
-
-                // Embaralha ao carregar
                 const dadosEmbaralhados = shuffleArray(data);
                 setRestaurantes(dadosEmbaralhados);
             } catch (error) {
@@ -63,7 +60,6 @@ export default function GastronomiaPage() {
         return `https://wa.me/55${cleanNumber}`;
     };
 
-    // Lógica de Filtragem atualizada para as novas categorias
     const restaurantesFiltrados = filtro === "TODOS"
         ? restaurantes
         : restaurantes.filter((r) => r.categoria === filtro);
@@ -73,11 +69,10 @@ export default function GastronomiaPage() {
             <Header />
 
             <main className="flex-grow font-sans antialiased text-[#2D3A30]">
-                {/* Hero Section */}
                 <header className="relative bg-[#1B3022] pt-48 pb-40 rounded-b-[4rem] shadow-2xl overflow-hidden text-center">
                     <div className="absolute inset-0 z-0">
                         <img
-                            src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=2000"
+                            src="/gastronomia_guapi.jpg"
                             className="w-full h-full object-cover opacity-40 mix-blend-overlay"
                             alt="Gastronomia em Guapimirim"
                         />
@@ -92,10 +87,7 @@ export default function GastronomiaPage() {
                     </div>
                 </header>
 
-                {/* Container Principal */}
                 <div className="max-w-7xl mx-auto px-6 relative z-20">
-
-                    {/* Navegação de Filtros - ATUALIZADO CONFORME MODELS.PY */}
                     <nav className="flex justify-center md:justify-start gap-3 -mt-8 overflow-x-auto pb-6 scrollbar-hide">
                         {[
                             { id: "TODOS", label: "Tudo", icon: LayoutGrid },
@@ -181,13 +173,24 @@ export default function GastronomiaPage() {
                                                             </p>
                                                         </div>
 
+                                                        {/* Horário e Endereço centralizados no corpo do card */}
                                                         <div className="pt-4 border-t border-emerald-50 mt-auto space-y-3">
-                                                            <div className="flex items-start gap-2 text-gray-400">
-                                                                <MapPin size={12} className="mt-0.5" />
-                                                                <p className="text-[10px] font-medium leading-tight">{item.endereco}</p>
+
+                                                            {/* Horário de Funcionamento (Corrigido para cima do endereço) */}
+                                                            {item.horario && (
+                                                                <div className="flex items-center gap-2 text-black text-sm font-bold italic">
+                                                                    <Clock size={14} className="text-emerald-600" />
+                                                                    <span>{item.horario}</span>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Endereço */}
+                                                            <div className="flex items-start gap-2 text-black">
+                                                                <MapPin size={14} className="mt-0.5 text-emerald-400" />
+                                                                <p className="text-sm font-bold leading-tight">{item.endereco}</p>
                                                             </div>
 
-                                                            <div className="flex flex-wrap gap-3">
+                                                            <div className="flex flex-wrap gap-3 pt-2">
                                                                 <a href={`tel:${item.telefone}`} className="flex items-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase hover:text-emerald-600 transition-colors bg-emerald-50 px-3 py-2 rounded-xl flex-1 justify-center">
                                                                     <Phone size={12} className="text-emerald-500" /> Ligar
                                                                 </a>
@@ -207,7 +210,6 @@ export default function GastronomiaPage() {
                     </div>
                 </div>
             </main>
-
 
         </div>
     );

@@ -80,7 +80,7 @@ export default function HospedagemPage() {
                 <header className="relative bg-[#1B3022] pt-48 pb-40 rounded-b-[4rem] shadow-2xl overflow-hidden text-center">
                     <div className="absolute inset-0 z-0">
                         <img
-                            src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=2000"
+                            src="/hospedagem.jpg"
                             className="w-full h-full object-cover opacity-40 mix-blend-overlay"
                             alt="Hospedagem em Guapimirim"
                         />

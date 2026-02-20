@@ -80,12 +80,11 @@ class Gastronomia(models.Model):
     nome = models.CharField(max_length=100)
     categoria = models.CharField(max_length=20, choices=CATEGORIAS)
     especialidade = models.CharField(max_length=200, help_text="Ex: Comida Caseira, Massas, Hambúrguer Artesanal")
-    
     foto = models.ImageField(upload_to='gastronomia/', blank=True, null=True)
-    
     bairro = models.CharField(max_length=50, default="Centro")
     endereco = models.CharField(max_length=255, blank=True)
     telefone = models.CharField(max_length=20)
+    horario = models.CharField(max_length=100, null=True, blank=True)
     delivery = models.BooleanField(default=True)
     vegano_vegetariano = models.BooleanField(default=False, verbose_name="Opções Veg/Veggie")
     
@@ -106,9 +105,7 @@ class Hospedagem(models.Model):
     nome = models.CharField(max_length=100)
     tipo = models.CharField(max_length=20, choices=TIPOS, default='POUSADA')
     descricao = models.TextField(blank=True)
-    
     foto = models.ImageField(upload_to='hospedagem/', blank=True, null=True)
-    
     bairro = models.CharField(max_length=50, help_text="Ex: Barreira, Caneca Fina, Centro")
     endereco = models.CharField(max_length=255, blank=True)
     telefone = models.CharField(max_length=50, blank=True)
@@ -134,10 +131,8 @@ class HorarioOnibus(models.Model):
     empresa = models.CharField(max_length=50) 
     numero_linha = models.CharField(max_length=20, blank=True)
     tipo = models.CharField(max_length=50, choices=TIPOS, default='INTERMUNICIPAL')
-    
     tarifa = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     horarios = models.TextField(help_text="Separe os horários por vírgula")
-    
     via = models.CharField(max_length=200, blank=True)
     observacoes = models.TextField(blank=True)
 

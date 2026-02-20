@@ -29,7 +29,7 @@ export default function ACidadePage() {
                 <meta name="description" content="Conheça Guapimirim, o portal da Serra dos Órgãos. Natureza, cachoeiras, manguezais e o icônico Dedo de Deus." />
                 <meta property="og:title" content="A Cidade | Guia Guapimirim" />
                 <meta property="og:description" content="Explore as belezas naturais e a cidade de Guapimirim no Rio de Janeiro." />
-                <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/4/42/Vista_do_Dedo_de_Deus_%281431%29.jpg" />
+                <meta property="og:image" content="/guapimirim_serra_dos_orgaos.jpg" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
 
@@ -40,7 +40,7 @@ export default function ACidadePage() {
                 <header className="relative bg-[#1B3022] pt-48 pb-40 rounded-b-[4rem] shadow-2xl overflow-hidden text-center">
                     <div className="absolute inset-0 z-0">
                         <img
-                            src="https://upload.wikimedia.org/wikipedia/commons/4/42/Vista_do_Dedo_de_Deus_%281431%29.jpg"
+                            src="/guapimirim_serra_dos_orgaos.jpg"
                             alt="Vista do Dedo de Deus - Guapimirim"
                             className="w-full h-full object-cover object-center opacity-50 mix-blend-overlay scale-105"
                         />
@@ -114,7 +114,7 @@ export default function ACidadePage() {
                             <div className="relative">
                                 <div className="absolute -inset-4 bg-emerald-500/10 rounded-[4rem] blur-2xl"></div>
                                 <img
-                                    src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1200"
+                                    src="/baia_de_ganabara.jfif"
                                     alt="Montanhas de Guapimirim"
                                     className="relative rounded-[4rem] shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 h-[400px] w-full object-cover"
                                 />
@@ -126,7 +126,7 @@ export default function ACidadePage() {
                             <div className="relative order-2 lg:order-1">
                                 <div className="absolute -inset-4 bg-blue-500/10 rounded-[4rem] blur-2xl"></div>
                                 <img
-                                    src="https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&q=80&w=1200"
+                                    src="/chico_trekking_portais_de_hercules.jpg"
                                     alt="Escalada em Guapimirim"
                                     className="relative rounded-[4rem] shadow-2xl -rotate-2 hover:rotate-0 transition-transform duration-500 h-[400px] w-full object-cover"
                                 />
@@ -149,7 +149,7 @@ export default function ACidadePage() {
                             </div>
                             <div className="relative">
                                 <img
-                                    src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=1200"
+                                    src="/cachoeiras_guapimirim.jpg"
                                     alt="Cachoeiras de Guapimirim"
                                     className="relative rounded-[4rem] shadow-2xl rotate-1 hover:rotate-0 transition-transform duration-500 h-[400px] w-full object-cover"
                                 />
@@ -160,7 +160,7 @@ export default function ACidadePage() {
                         <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                             <div className="relative order-2 lg:order-1">
                                 <img
-                                    src="https://images.unsplash.com/photo-1505144808419-1957a94ca61e?auto=format&fit=crop&q=80&w=1200"
+                                    src="/apa_guapimirim.jpg"
                                     alt="Pantanal Carioca em Guapimirim"
                                     className="relative rounded-[4rem] shadow-2xl -rotate-1 hover:rotate-0 transition-transform duration-500 h-[400px] w-full object-cover"
                                 />
@@ -183,7 +183,7 @@ export default function ACidadePage() {
                             </div>
                             <div className="relative">
                                 <img
-                                    src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=1200"
+                                    src="/Capela_NS_da_Conceição_do_Soberbo.jfif"
                                     alt="Cultura de Guapimirim"
                                     className="relative rounded-[4rem] shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500 h-[400px] w-full object-cover"
                                 />

@@ -30,8 +30,7 @@ export default function HorariosPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // CORREÇÃO AQUI: A rota correta no Django é 'transporte'
-        fetch("http://127.0.0.1:8000/api/transporte/")
+        fetch("http://127.0.0.1:8000/api/horarios/")
             .then((res) => {
                 if (!res.ok) {
                     throw new Error(`Erro na API: ${res.status}`);
@@ -74,7 +73,7 @@ export default function HorariosPage() {
                     {/* Imagem de Fundo com Máscara */}
                     <div className="absolute inset-0 z-0">
                         <img
-                            src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&q=80&w=2000"
+                            src="/horarios.png"
                             alt="Transporte"
                             className="w-full h-full object-cover opacity-20 mix-blend-overlay"
                         />

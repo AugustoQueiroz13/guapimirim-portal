@@ -77,7 +77,7 @@ export default function TurismoPage() {
                 <header className="relative bg-[#1B3022] pt-48 pb-40 rounded-b-[4rem] shadow-2xl overflow-hidden text-center">
                     <div className="absolute inset-0 z-0">
                         <img
-                            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2000"
+                            src="/pedra_do_sino.webp"
                             className="w-full h-full object-cover opacity-40 mix-blend-overlay"
                             alt="Turismo em Guapimirim"
                         />
