@@ -67,10 +67,6 @@ export default function TurismoPage() {
                 <title>Turismo em Guapimirim | Cachoeiras, Trilhas e História</title>
                 <meta name="description" content="Descubra o que fazer em Guapimirim. Guia completo de cachoeiras, trilhas no Dedo de Deus e pontos históricos." />
             </Head>
-
-            {/* Header já incluso no Layout, mas mantido a estrutura caso esteja usando template limpo */}
-            {/* <Header /> -> Removido se estiver usando Layout.tsx global */}
-
             <main className="flex-grow font-sans antialiased text-[#2D3A30]">
 
                 {/* Hero Section */}

@@ -57,7 +57,6 @@ export default function ComoChegarPage() {
                         <div className="absolute inset-0 bg-gradient-to-t from-[#1B3022] via-transparent to-[#1B3022]/60"></div>
                     </div>
                     <div className="relative z-10 max-w-4xl mx-auto px-6">
-                        {/* Link Voltar ao Início */}
                         <Link href="/" className="inline-flex items-center gap-2 text-emerald-400 font-black text-[10px] uppercase tracking-[0.2em] mb-8 hover:text-white transition-colors">
                             <ArrowLeft className="w-4 h-4" /> Voltar ao Início
                         </Link>
@@ -66,7 +65,7 @@ export default function ComoChegarPage() {
                     </div>
                 </header>
 
-                {/* Submenu de Navegação (Anchor Menu) */}
+                {/* Submenu de Navegação */}
                 <div className="sticky top-0 z-50 bg-[#F8FAF9]/80 backdrop-blur-md border-b border-emerald-100 shadow-sm">
                     <div className="max-w-7xl mx-auto px-6 py-4">
                         <div className="flex flex-wrap justify-center gap-4 md:gap-8">
@@ -101,33 +100,44 @@ export default function ComoChegarPage() {
                         </div>
 
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            {/* Bloco 1: RJ e Região dos Lagos */}
                             <div className="bg-white p-10 rounded-[3rem] shadow-xl border border-emerald-50 space-y-8 text-balance">
                                 <div>
                                     <h3 className="text-emerald-600 font-black text-xs uppercase tracking-widest mb-3 italic">Do Rio de Janeiro</h3>
-                                    <p className="text-gray-600 leading-relaxed font-medium">
-                                        O acesso principal é realizado pela rodovia <span className="font-black text-[#1B3022]">BR-116 (Rio-Teresópolis)</span>. Após passar pelo pedágio de Magé, mantenha-se na pista por mais 9km. Guapimirim é a última cidade antes de iniciar a subida da Serra dos Órgãos. Fique atento à entrada principal do Portal a direita após o viaduto de Parada Modelo.
+                                    <p className="text-gray-600 leading-relaxed font-medium text-sm">
+                                        O acesso principal é realizado pela rodovia <span className="font-black text-[#1B3022]">BR-116 (Rio-Teresópolis)</span>. Após passar pelo pedágio de Magé, mantenha-se na pista por mais 9km. Guapimirim é a última cidade antes de iniciar a subida da Serra dos Órgãos. Fique atento à entrada principal do Portal à direita após o viaduto de Parada Modelo.
                                     </p>
                                 </div>
                                 <div className="pt-8 border-t border-emerald-50">
                                     <h3 className="text-emerald-600 font-black text-xs uppercase tracking-widest mb-3 italic">Da Região dos Lagos</h3>
-                                    <p className="text-gray-600 leading-relaxed font-medium">
+                                    <p className="text-gray-600 leading-relaxed font-medium text-sm">
                                         Siga pela <span className="font-black text-[#1B3022]">Via Lagos (RJ-124)</span> até Rio Bonito e acesse a BR-101 em direção ao Rio de Janeiro. Na altura de Itaboraí, pegue a saída para Magé via <span className="font-black text-[#1B3022]">Arco Metropolitano (BR-493)</span>. Ao chegar no entroncamento com a BR-116 em Magé, siga as placas no sentido Teresópolis até o portal de entrada de Guapimirim.
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="bg-white p-10 rounded-[3rem] shadow-xl border border-emerald-50 space-y-8 text-balance flex flex-col justify-between">
-                                <div>
-                                    <h3 className="text-emerald-600 font-black text-xs uppercase tracking-widest mb-3 italic">De Minas Gerais ou Teresópolis</h3>
-                                    <p className="text-gray-600 leading-relaxed font-medium">
-                                        Para quem vem pela <span className="font-black text-[#1B3022]">BR-116 (sentido Rio de Janeiro)</span>, o trajeto envolve a descida da Serra dos Órgãos. O acesso principal para o centro de Guapimirim é seguindo para descer a serra após passar pelo Mirante do Soberbo, logo no início do trecho de descida.
-                                    </p>
+                            {/* Bloco 2: MG, Teresópolis e SÃO PAULO */}
+                            <div className="bg-white p-10 rounded-[3rem] shadow-xl border border-emerald-50 space-y-8 text-balance flex flex-col">
+                                <div className="space-y-8">
+                                    <div>
+                                        <h3 className="text-emerald-600 font-black text-xs uppercase tracking-widest mb-3 italic">De Minas Gerais ou Teresópolis</h3>
+                                        <p className="text-gray-600 leading-relaxed font-medium text-sm">
+                                            Para quem vem pela <span className="font-black text-[#1B3022]">BR-116 (sentido Rio de Janeiro)</span>, o trajeto envolve a descida da Serra dos Órgãos. O acesso principal para o centro de Guapimirim é seguindo para descer a serra após passar pelo Mirante do Soberbo, logo no início do trecho de descida.
+                                        </p>
+                                    </div>
+                                    <div className="pt-8 border-t border-emerald-50">
+                                        <h3 className="text-emerald-600 font-black text-xs uppercase tracking-widest mb-3 italic">Vindo de São Paulo</h3>
+                                        <p className="text-gray-600 leading-relaxed font-medium text-sm">
+                                            Siga pela <span className="font-black text-[#1B3022]">Rodovia Presidente Dutra (BR-116)</span> até o Rio de Janeiro. Na altura de Seropédica, acesse o <span className="font-black text-[#1B3022]">Arco Metropolitano (BR-493)</span> no sentido Itaboraí/Magé. Esta rota evita o trânsito do centro do Rio. Ao chegar em Magé, pegue o entroncamento para a BR-116 sentido Teresópolis e siga até Guapimirim.
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="space-y-4">
+
+                                <div className="space-y-4 mt-8">
                                     <div className="p-6 bg-amber-50 rounded-[2rem] border border-amber-100 flex gap-4 items-center shadow-sm">
                                         <Smartphone className="text-amber-500 w-6 h-6 flex-shrink-0" />
                                         <p className="text-[12px] text-amber-900 font-bold italic leading-tight text-balance">
-                                            Dica de GPS: Para chegar ao coração da cidade, procure por <span className="font-black uppercase">Prefeitura de Guapimirim</span> ou <span className="font-black uppercase">Praça da Emancipação</span> como ponto de referência central.
+                                            Dica de GPS: Para chegar ao coração da cidade, procure por <span className="font-black uppercase">Prefeitura de Guapimirim</span> ou <span className="font-black uppercase">Praça da Emancipação</span>.
                                         </p>
                                     </div>
                                     <div className="p-6 bg-emerald-50 rounded-[2rem] border border-emerald-100 flex gap-4 items-center shadow-sm">
@@ -188,7 +198,7 @@ export default function ComoChegarPage() {
                                             </div>
                                             <div className="bg-amber-50 p-6 rounded-3xl border border-amber-100 flex gap-4">
                                                 <AlertTriangle className="text-amber-600 w-6 h-6 flex-shrink-0" />
-                                                <p className="text-sm font-medium text-amber-900 leading-relaxed italic">Ajuste para condições reais de estrada: Fatores como trânsito, ar-condicionado e peso influenciam no consumo real. Recomendamos uma margem de segurança de 10% no orçamento.</p>
+                                                <p className="text-sm font-medium text-amber-900 leading-relaxed italic">Ajuste para condições reais: Trânsito, ar-condicionado e peso influenciam no consumo. Recomendamos margem de 10%.</p>
                                             </div>
                                         </div>
                                     ) : (
@@ -199,7 +209,7 @@ export default function ComoChegarPage() {
                                     )}
 
                                     <div className="mt-8 pt-8 border-t border-emerald-50">
-                                        <h4 className="text-[#1B3022] font-black text-sm uppercase mb-6 flex items-center gap-2 italic"><CheckCircle2 className="text-emerald-500 w-5 h-5" /> Checklist de Revisão para Viagem</h4>
+                                        <h4 className="text-[#1B3022] font-black text-sm uppercase mb-6 flex items-center gap-2 italic"><CheckCircle2 className="text-emerald-500 w-5 h-5" /> Checklist de Revisão</h4>
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                             {['Pneus Calibrados', 'Nível do Óleo', 'Arrefecimento', 'Luzes e Freios'].map((dica) => (
                                                 <div key={dica} className="bg-gray-50 p-3 rounded-xl text-[10px] font-black text-gray-500 uppercase text-center border border-gray-100 italic">{dica}</div>
@@ -222,14 +232,13 @@ export default function ComoChegarPage() {
                                     <h3 className="text-[#1B3022] font-black uppercase text-2xl tracking-tighter italic">EcoRioMinas - Concessionária BR-116</h3>
                                 </div>
                                 <p className="text-gray-600 font-medium leading-relaxed">
-                                    A rodovia que corta Guapimirim é administrada pela <span className="font-black text-[#1B3022]">EcoRioMinas</span>. Em caso de qualquer imprevisto durante sua viagem, como problemas mecânicos, pneus furados ou necessidade de atendimento médico, a concessionária oferece suporte gratuito 24 horas por dia em todo o trecho da Rio-Teresópolis.
+                                    A rodovia que corta Guapimirim é administrada pela <span className="font-black text-[#1B3022]">EcoRioMinas</span>. Em caso de imprevistos como problemas mecânicos ou pneus furados, a concessionária oferece suporte gratuito 24 horas.
                                 </p>
                             </div>
                             <div className="bg-[#1B3022] p-8 rounded-[3rem] text-center space-y-4 shadow-xl">
                                 <p className="text-emerald-400 font-black text-[10px] uppercase tracking-[0.2em] italic">Atendimento de Emergência</p>
                                 <div className="flex flex-col gap-2">
                                     <a href="tel:08001160493" className="text-white text-2xl font-black hover:text-emerald-400 transition-colors tracking-tighter">0800 116 0493</a>
-                                    <p className="text-white/40 text-[9px] font-bold uppercase tracking-widest italic leading-none">Deficientes Auditivos: 0800 116 0465</p>
                                 </div>
                             </div>
                         </div>
@@ -250,10 +259,10 @@ export default function ComoChegarPage() {
                                     <MapPin className="w-4 h-4" /> Rotas de Conexão (Sem linha direta)
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 text-balance">
-                                    <RouteInfo city="Vindo de Niterói" desc="Pegue o ônibus em direção a Magé (Viação Rio Ita) e, ao chegar no terminal de Magé, realize a integração com as linhas municipais ou vans destinadas a Guapimirim." />
-                                    <RouteInfo city="Vindo de Petrópolis" desc="Utilize a linha intermunicipal Petrópolis x Teresópolis. Ao chegar no terminal de Teresópolis, utilize a linha Teresópolis x Guapimirim (Viação Teresópolis)." />
-                                    <RouteInfo city="Vindo de Itaboraí" desc="Desloque-se até Magé através da rodovia BR-493. No centro de Magé, utilize as vans intermunicipais ou ônibus que fazem o trajeto direto para Guapimirim." />
-                                    <RouteInfo city="Vindo de São Gonçalo" desc="Siga em direção ao terminal rodoviário de Magé. De lá, utilize as linhas frequentes de ônibus ou vans que seguem para o centro de Guapimirim." />
+                                    <RouteInfo city="Vindo de Niterói" desc="Ônibus direção Magé (Viação Rio Ita) e, no terminal de Magé, integração com linhas municipais ou vans." />
+                                    <RouteInfo city="Vindo de Petrópolis" desc="Intermunicipal Petrópolis x Teresópolis. No terminal de Teresópolis, linha Teresópolis x Guapimirim." />
+                                    <RouteInfo city="Vindo de Itaboraí" desc="Vá até Magé pela BR-493. No centro de Magé, utilize vans ou ônibus diretos para Guapimirim." />
+                                    <RouteInfo city="Vindo de São Gonçalo" desc="Siga ao terminal de Magé. De lá, utilize linhas de ônibus ou vans frequentes para o centro." />
                                 </div>
                                 <div className="mt-10 pt-8 border-t border-emerald-50">
                                     <Link href="/horarios" className="inline-flex items-center gap-3 bg-[#1B3022] text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-emerald-900 transition-all group shadow-lg">
@@ -284,7 +293,7 @@ export default function ComoChegarPage() {
                         </div>
                         <div className="rounded-[4rem] overflow-hidden shadow-2xl border-8 border-white h-[450px] relative">
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d58953.5186252119!2d-43.02324055274937!3d-22.540139943640203!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x99009848f07b45%3A0x6b4845550275816b!2sGuapimirim%2C%20RJ!5e0!3m2!1spt-BR!2sbr!4v1709140000000!5m2!1spt-BR!2sbr0"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d117970.47271926227!2d-43.0805177!3d-22.5359733!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x990089f9e5781d%3A0xc3f9a797f7422f67!2sGuapimirim%2C%20RJ!5e0!3m2!1spt-BR!2sbr!4v1700000000000"
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}
@@ -296,7 +305,7 @@ export default function ComoChegarPage() {
                 </div>
             </main>
 
-            <Footer />
+
         </div>
     );
 }

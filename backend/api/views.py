@@ -1,13 +1,18 @@
 from rest_framework import viewsets, filters
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Turismo, Hospedagem, Gastronomia, Comercio, HorarioOnibus
+from .models import Turismo, Hospedagem, Comercio, Gastronomia, Comercio, HorarioOnibus
 from .serializers import (
     TurismoSerializer,
     HospedagemSerializer, 
     GastronomiaSerializer, 
     ComercioSerializer, 
-    HorarioOnibusSerializer
+    HorarioOnibusSerializer,
+    ComercioSerializer
 )
+# --- COMERCIO ---
+class ComercioViewSet(viewsets.ModelViewSet):
+    queryset = Comercio.objects.all()
+    serializer_class = ComercioSerializer
 # --- TURISMO ---
 class TurismoViewSet(viewsets.ModelViewSet):
     queryset = Turismo.objects.all()
@@ -37,7 +42,7 @@ class ComercioViewSet(viewsets.ReadOnlyModelViewSet):
     API para listar comércios e serviços diversos.
     Ordenação: Destaques primeiro, depois alfabético.
     """
-    queryset = Comercio.objects.all().order_by('-destaque', 'nome') 
+    queryset = Comercio.objects.all().order_by('destaque', 'nome') 
     serializer_class = ComercioSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['categoria', 'bairro', 'destaque']

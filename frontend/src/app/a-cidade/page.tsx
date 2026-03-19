@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import {
@@ -8,17 +9,22 @@ import {
     Mountain, Waves, Wind, Landmark, PhoneCall
 } from "lucide-react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import { sendGAEvent } from '@next/third-parties/google'; // Importação do rastreador
 
 export default function ACidadePage() {
     // Dados para o Mapa Interativo de Pontos Turísticos
+    const [selectedPonto, setSelectedPonto] = useState<any>(null);
     const pontosTuristicos = [
-        { name: "Poço Verde (PARNASO)", coord: "Sede Guapimirim", icon: "🌊" },
-        { name: "Cachoeira do Vale da Lua", coord: "Barreira", icon: "🌙" },
-        { name: "Dedo de Deus", coord: "Serra dos Órgãos", icon: "⛰️" },
-        { name: "Poço do Padre", coord: "Barreira", icon: "🙏" },
+        { name: "Poço Verde (PARNASO)", coord: "Sede Guapimirim", icon: "🌊", x: "45%", y: "25%" },
+        { name: "Cachoeira do Vale da Lua", coord: "Barreira", icon: "🌙", x: "50%", y: "20%" },
+        { name: "Dedo de Deus", coord: "Serra dos Órgãos", icon: "⛰️", x: "35%", y: "10%" },
+        { name: "Poço do Padre", coord: "Barreira", icon: "🙏", x: "75%", y: "10%" },
+        { name: "PARNASO", coord: "Sede Guapimirim", icon: "🌊", x: "45%", y: "20%" },
+        { name: "Portal de Parada Modelo", coord: "Parada Modelo", icon: "📍", x: "50%", y: "35%" },
+        { name: "Portal de Guapimirim", coord: "Serra dos Órgãos", icon: "⛰️", x: "50%", y: "30%" },
+        { name: "Centro de Primatologia", coord: "Paraíso", icon: "🦧", x: "70%", y: "15%" },
     ];
 
     return (
@@ -191,40 +197,96 @@ export default function ACidadePage() {
                         </section>
                     </div>
 
-                    {/* MAPA INTERATIVO - COM RASTREAMENTO */}
+                    {/* MAPA INTERATIVO - SEÇÃO ATUALIZADA */}
                     <section className="mb-28">
                         <div className="flex items-center gap-3 mb-8">
                             <Layers className="text-emerald-500 w-6 h-6" />
                             <h2 className="text-[#1B3022] text-3xl font-black uppercase tracking-tighter">Exploração Interativa</h2>
                         </div>
-                        <div className="bg-white p-4 rounded-[4rem] shadow-2xl border border-emerald-50 h-[500px] flex overflow-hidden">
-                            <div className="w-1/3 bg-[#1B3022] rounded-[3rem] p-8 space-y-4 overflow-y-auto">
-                                <span className="text-emerald-400 font-black text-[10px] uppercase tracking-widest">Selecione um local</span>
+
+                        <div className="bg-white p-4 rounded-[4rem] shadow-2xl border border-emerald-50 min-h-[550px] flex flex-col md:flex-row overflow-hidden">
+
+                            {/* Lado Esquerdo: Menu de Pontos */}
+                            <div className="w-full md:w-1/3 bg-[#1B3022] rounded-[3rem] p-6 space-y-3 overflow-y-auto max-h-[500px]">
+                                <span className="text-emerald-400 font-black text-[10px] uppercase tracking-widest block mb-4">Selecione para localizar</span>
                                 {pontosTuristicos.map((ponto, i) => (
                                     <button
                                         key={i}
-                                        onClick={() => sendGAEvent({ event: 'map_interaction', value: ponto.name })}
-                                        className="w-full text-left p-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all group"
+                                        onClick={() => {
+                                            setSelectedPonto(ponto);
+                                            sendGAEvent({ event: 'map_interaction', value: ponto.name });
+                                        }}
+                                        className={`w-full text-left p-4 rounded-2xl border transition-all flex items-center gap-3 group ${selectedPonto?.name === ponto.name
+                                            ? "bg-emerald-500 border-emerald-400 shadow-lg scale-[1.02]"
+                                            : "bg-white/5 border-white/10 hover:bg-white/10"
+                                            }`}
                                     >
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-2xl">{ponto.icon}</span>
-                                            <div>
-                                                <p className="text-white font-bold text-sm uppercase">{ponto.name}</p>
-                                                <p className="text-emerald-400/60 text-[10px] font-black uppercase">{ponto.coord}</p>
-                                            </div>
+                                        <span className="text-2xl">{ponto.icon}</span>
+                                        <div>
+                                            <p className={`font-bold text-sm uppercase ${selectedPonto?.name === ponto.name ? "text-white" : "text-white/90"}`}>
+                                                {ponto.name}
+                                            </p>
+                                            <p className={`text-[10px] font-black uppercase ${selectedPonto?.name === ponto.name ? "text-emerald-100" : "text-emerald-400/60"}`}>
+                                                {ponto.coord}
+                                            </p>
                                         </div>
                                     </button>
                                 ))}
                             </div>
-                            <div className="w-2/3 relative bg-emerald-50/50 flex items-center justify-center">
-                                <div className="text-emerald-200 opacity-20 absolute scale-150">
-                                    <MapIcon size={300} />
+
+                            {/* Lado Direito: O Mapa Real */}
+                            <div className="w-full md:w-2/3 relative bg-emerald-50/30 overflow-hidden flex items-center justify-center p-4">
+                                {/* Base do Mapa */}
+                                <div className="relative w-full h-full max-w-[600px] aspect-square">
+                                    <img
+                                        src="/mapa_guapimirim.png" // Coloque sua imagem aqui na pasta public
+                                        alt="Mapa de Guapimirim"
+                                        className="w-full h-full object-contain drop-shadow-2xl"
+                                    />
+
+                                    {/* Marcadores Dinâmicos baseados em coordenadas % */}
+                                    <AnimatePresence>
+                                        {pontosTuristicos.map((ponto, index) => (
+                                            <motion.div
+                                                key={index}
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                className="absolute cursor-pointer group"
+                                                style={{ top: ponto.y, left: ponto.x }} // Usa as coordenadas do array
+                                                onClick={() => setSelectedPonto(ponto)}
+                                            >
+                                                {/* Pin do Mapa */}
+                                                <div className={`relative -translate-x-1/2 -translate-y-1/2 flex flex-col items-center`}>
+                                                    <div className={`p-2 rounded-full shadow-xl transition-all ${selectedPonto?.name === ponto.name ? "bg-emerald-500 scale-125 z-30" : "bg-white z-20"
+                                                        }`}>
+                                                        <MapPin size={16} className={selectedPonto?.name === ponto.name ? "text-white" : "text-emerald-600"} />
+                                                    </div>
+
+                                                    {/* Label flutuante no Pin */}
+                                                    {selectedPonto?.name === ponto.name && (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, y: 10 }}
+                                                            animate={{ opacity: 1, y: -5 }}
+                                                            className="absolute bottom-full mb-2 bg-[#1B3022] text-white text-[10px] font-black px-3 py-1 rounded-lg whitespace-nowrap shadow-2xl z-40"
+                                                        >
+                                                            {ponto.name}
+                                                        </motion.div>
+                                                    )}
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </AnimatePresence>
                                 </div>
-                                <p className="text-[#1B3022] font-black uppercase text-xs tracking-[0.3em] relative z-10 animate-pulse">Interface do Mapa Ativa</p>
+
+                                {/* Overlay de instrução caso nada esteja selecionado */}
+                                {!selectedPonto && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-[#1B3022]/5 backdrop-blur-[2px] pointer-events-none">
+                                        <p className="text-[#1B3022]/40 font-black uppercase text-[10px] tracking-[0.3em]">Toque nos pontos para explorar</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </section>
-
                     {/* LINKS FINAIS - COM RASTREAMENTO */}
                     <section className="mb-28 flex flex-col md:flex-row justify-center gap-8">
                         <Link

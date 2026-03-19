@@ -7,9 +7,11 @@ from .views import (
     HorarioOnibusViewSet,
     HorariosViewSet, 
     TurismoViewSet,
+    ComercioViewSet
 )
 
 router = DefaultRouter()
+router.register(r'comercio', ComercioViewSet)
 router.register(r'turismo', TurismoViewSet)
 router.register(r'hospedagem', HospedagemViewSet)
 router.register(r'gastronomia', GastronomiaViewSet)
@@ -18,5 +20,5 @@ router.register(r'transporte', HorarioOnibusViewSet)
 router.register(r'horarios', HorariosViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('api/', include(router.urls)),
 ]

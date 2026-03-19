@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from .models import Turismo, TurismoFoto, Comercio, Gastronomia, Hospedagem, HorarioOnibus
 
 class TurismoFotoInline(admin.TabularInline):
@@ -29,6 +30,12 @@ class ComercioAdmin(admin.ModelAdmin):
     list_display = ('nome', 'categoria', 'bairro', 'destaque', 'link_whatsapp')
     list_filter = ('categoria', 'bairro', 'destaque')
     search_fields = ('nome', 'subcategoria')
+    def link_whatsapp(self, obj):
+        if obj.telefone:
+            numero_limpo = ''.join(filter(str.isdigit, obj.telefone))
+            return format_html('<a href="https://wa.me/55{}" target="_blank">📲 Link</a>', numero_limpo)
+        return "-"
+    link_whatsapp.short_description = 'WhatsApp'
 
 @admin.register(HorarioOnibus)
 class HorarioOnibusAdmin(admin.ModelAdmin):

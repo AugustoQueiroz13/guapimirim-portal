@@ -2,15 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 import {
     Bed, MapPin, Phone, MessageCircle, ArrowLeft,
-    ExternalLink, LayoutGrid, Building, Home, Tent,
-    Trees, Waves // Ícones adicionais para os filtros
+    ExternalLink, LayoutGrid, Building, Home, Tent
 } from "lucide-react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
-// Definindo a estrutura dos dados que vêm do Django
 interface Hospedagem {
     id: number;
     nome: string;
@@ -28,9 +26,8 @@ interface Hospedagem {
 export default function HospedagemPage() {
     const [pousadas, setPousadas] = useState<Hospedagem[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filtro, setFiltro] = useState("TODOS"); // Estado para controlar o filtro ativo
+    const [filtro, setFiltro] = useState("TODOS");
 
-    // Função para embaralhar o array (Algoritmo Fisher-Yates)
     function shuffleArray(array: Hospedagem[]) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -39,16 +36,12 @@ export default function HospedagemPage() {
         return array;
     }
 
-    // Busca os dados do Django ao carregar a página
     useEffect(() => {
         async function fetchHospedagens() {
             try {
                 const response = await fetch('http://127.0.0.1:8000/api/hospedagem/');
                 if (!response.ok) throw new Error('Erro ao buscar dados');
-
                 const data = await response.json();
-
-                // Aplica a aleatoriedade assim que os dados chegam
                 const dadosEmbaralhados = shuffleArray(data);
                 setPousadas(dadosEmbaralhados);
             } catch (error) {
@@ -60,12 +53,10 @@ export default function HospedagemPage() {
         fetchHospedagens();
     }, []);
 
-    // Lógica de Filtragem (Derived State)
     const pousadasFiltradas = filtro === "TODOS"
         ? pousadas
         : pousadas.filter((p) => p.tipo === filtro);
 
-    // Função para limpar o telefone e gerar link do WhatsApp
     const getWhatsappLink = (phone: string) => {
         const cleanNumber = phone.replace(/\D/g, '');
         return `https://wa.me/55${cleanNumber}`;
@@ -76,7 +67,7 @@ export default function HospedagemPage() {
             <Header />
 
             <main className="flex-grow font-sans antialiased text-[#2D3A30]">
-                {/* Hero Section */}
+                {/* Hero Section - Caminho corrigido */}
                 <header className="relative bg-[#1B3022] pt-48 pb-40 rounded-b-[4rem] shadow-2xl overflow-hidden text-center">
                     <div className="absolute inset-0 z-0">
                         <img
@@ -95,16 +86,14 @@ export default function HospedagemPage() {
                     </div>
                 </header>
 
-                {/* Container Principal com Margem Negativa para o Menu */}
                 <div className="max-w-7xl mx-auto px-6 relative z-20">
-
-                    {/* Navegação de Filtros (Estilo Transporte Público) */}
+                    {/* Navegação de Filtros */}
                     <nav className="flex justify-center md:justify-start gap-3 -mt-8 overflow-x-auto pb-6 scrollbar-hide">
                         {[
                             { id: "TODOS", label: "Tudo", icon: LayoutGrid },
                             { id: "POUSADA", label: "Pousadas", icon: Bed },
                             { id: "HOTEL", label: "Hotéis", icon: Building },
-                            { id: "CHALE", label: "Chalés", icon: Home }, // Usando Home como Chalé
+                            { id: "CHALE", label: "Chalés", icon: Home },
                             { id: "CAMPING", label: "Camping", icon: Tent },
                         ].map((item) => (
                             <button
@@ -130,73 +119,79 @@ export default function HospedagemPage() {
                             <>
                                 {pousadasFiltradas.length === 0 ? (
                                     <div className="text-center py-20 opacity-50">
-                                        <p className="font-black uppercase tracking-widest">Nenhuma hospedagem encontrada nesta categoria.</p>
+                                        <p className="font-black uppercase tracking-widest">Nenhuma hospedagem encontrada.</p>
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                        {/* Renderiza a lista filtrada e embaralhada */}
-                                        {pousadasFiltradas.map((pousada) => (
-                                            <div key={pousada.id} className="bg-white rounded-[3rem] overflow-hidden shadow-xl border border-emerald-50 group hover:-translate-y-2 transition-all duration-300 flex flex-col h-full animate-in fade-in slide-in-from-bottom-4">
-                                                {/* Imagem vinda do Django ou Placeholder */}
-                                                <div className="h-48 bg-emerald-100 relative overflow-hidden flex-shrink-0">
-                                                    {pousada.foto ? (
-                                                        <img src={pousada.foto} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={pousada.nome} />
-                                                    ) : (
-                                                        <div className="w-full h-full flex flex-col items-center justify-center text-emerald-800/20">
-                                                            <Bed size={48} />
-                                                            <span className="text-[10px] font-black uppercase mt-2">Sem foto</span>
-                                                        </div>
-                                                    )}
-                                                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] font-black uppercase text-emerald-700 shadow-sm">
-                                                        {pousada.bairro}
-                                                    </div>
-                                                    {/* Tags Flutuantes */}
-                                                    <div className="absolute bottom-4 left-4 flex gap-2">
-                                                        {pousada.pet_friendly && (
-                                                            <span className="bg-[#1B3022]/90 backdrop-blur px-2 py-1 rounded-lg text-[8px] font-bold uppercase text-emerald-400">Pet Friendly</span>
+                                        <AnimatePresence mode="popLayout">
+                                            {pousadasFiltradas.map((pousada) => (
+                                                <motion.div
+                                                    key={pousada.id}
+                                                    layout
+                                                    initial={{ opacity: 0, y: 20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, scale: 0.95 }}
+                                                    className="bg-white rounded-[3rem] overflow-hidden shadow-xl border border-emerald-50 group hover:-translate-y-2 transition-all duration-300 flex flex-col h-full"
+                                                >
+                                                    {/* Imagem */}
+                                                    <div className="h-48 bg-emerald-100 relative overflow-hidden flex-shrink-0">
+                                                        {pousada.foto ? (
+                                                            <img src={pousada.foto} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={pousada.nome} />
+                                                        ) : (
+                                                            <div className="w-full h-full flex flex-col items-center justify-center text-emerald-800/20">
+                                                                <Bed size={48} />
+                                                                <span className="text-[10px] font-black uppercase mt-2">Sem foto</span>
+                                                            </div>
                                                         )}
-                                                        {pousada.cafe_da_manha && (
-                                                            <span className="bg-emerald-500/90 backdrop-blur px-2 py-1 rounded-lg text-[8px] font-bold uppercase text-white">Café Incluso</span>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                                <div className="p-8 space-y-4 flex flex-col flex-grow">
-                                                    <div className="flex justify-between items-start">
-                                                        <div>
-                                                            <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1">{pousada.tipo}</p>
-                                                            <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022] leading-none">{pousada.nome}</h3>
-                                                        </div>
-                                                    </div>
-
-                                                    <p className="text-gray-500 text-xs font-medium leading-relaxed italic line-clamp-3 flex-grow">
-                                                        {pousada.descricao}
-                                                    </p>
-
-                                                    <div className="pt-4 border-t border-emerald-50 mt-auto space-y-3">
-                                                        {/* Endereço Curto */}
-                                                        <div className="flex items-start gap-2 text-gray-400">
-                                                            <MapPin size={12} className="mt-0.5" />
-                                                            <p className="text-[10px] font-medium leading-tight">{pousada.endereco}</p>
+                                                        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] font-black uppercase text-emerald-700 shadow-sm">
+                                                            {pousada.bairro}
                                                         </div>
 
-                                                        <div className="flex flex-wrap gap-3">
-                                                            <a href={`tel:${pousada.telefone}`} className="flex items-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase hover:text-emerald-600 transition-colors bg-emerald-50 px-3 py-2 rounded-xl">
-                                                                <Phone size={12} className="text-emerald-500" /> Ligar
-                                                            </a>
-                                                            <a href={getWhatsappLink(pousada.telefone)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase hover:text-emerald-600 transition-colors bg-emerald-50 px-3 py-2 rounded-xl">
-                                                                <MessageCircle size={12} className="text-emerald-500" /> WhatsApp
-                                                            </a>
-                                                            {pousada.site_reserva && (
-                                                                <a href={pousada.site_reserva} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-white font-black text-[9px] uppercase hover:bg-emerald-700 transition-colors bg-emerald-600 px-3 py-2 rounded-xl ml-auto">
-                                                                    Reservar <ExternalLink size={10} />
-                                                                </a>
+                                                        {/* Tags de Diferenciais */}
+                                                        <div className="absolute bottom-4 left-4 flex gap-2">
+                                                            {pousada.pet_friendly && (
+                                                                <span className="bg-[#1B3022]/90 backdrop-blur px-2 py-1 rounded-lg text-[8px] font-bold uppercase text-emerald-400 shadow-sm">Pet Friendly</span>
+                                                            )}
+                                                            {pousada.cafe_da_manha && (
+                                                                <span className="bg-emerald-500/90 backdrop-blur px-2 py-1 rounded-lg text-[8px] font-bold uppercase text-white shadow-sm">Café Incluso</span>
                                                             )}
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        ))}
+
+                                                    <div className="p-8 space-y-4 flex flex-col flex-grow">
+                                                        <div>
+                                                            <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1">{pousada.tipo}</p>
+                                                            <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022] leading-none mb-2">{pousada.nome}</h3>
+                                                            <p className="text-gray-500 text-xs font-medium leading-relaxed italic line-clamp-3">
+                                                                {pousada.descricao}
+                                                            </p>
+                                                        </div>
+
+                                                        <div className="pt-4 border-t border-emerald-50 mt-auto space-y-3">
+                                                            {/* Endereço - Padronizado: Preto e Maior */}
+                                                            <div className="flex items-start gap-2 text-black">
+                                                                <MapPin size={14} className="mt-0.5 text-emerald-600" />
+                                                                <p className="text-sm font-bold leading-tight">{pousada.endereco}</p>
+                                                            </div>
+
+                                                            <div className="flex flex-wrap gap-3 pt-2">
+                                                                <a href={`tel:${pousada.telefone}`} className="flex items-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase hover:text-emerald-600 transition-colors bg-emerald-50 px-3 py-2 rounded-xl flex-1 justify-center">
+                                                                    <Phone size={12} className="text-emerald-500" /> Ligar
+                                                                </a>
+                                                                <a href={getWhatsappLink(pousada.telefone)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-white font-black text-[9px] uppercase hover:bg-emerald-600 transition-colors bg-emerald-500 px-3 py-2 rounded-xl flex-1 justify-center shadow-md">
+                                                                    <MessageCircle size={12} /> WhatsApp
+                                                                </a>
+                                                                {pousada.site_reserva && (
+                                                                    <a href={pousada.site_reserva} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase hover:bg-gray-100 transition-colors border border-gray-200 px-3 py-2 rounded-xl">
+                                                                        Site <ExternalLink size={10} />
+                                                                    </a>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
+                                            ))}
+                                        </AnimatePresence>
                                     </div>
                                 )}
                             </>
@@ -204,8 +199,6 @@ export default function HospedagemPage() {
                     </div>
                 </div>
             </main>
-
-
         </div>
     );
 }

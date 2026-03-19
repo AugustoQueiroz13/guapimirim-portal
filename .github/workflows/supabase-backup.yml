@@ -1,0 +1,30 @@
+name: Supabase Auto Backup
+
+on:
+  schedule:
+    # Roda todo dia às 03:00 da manhã (horário UTC)
+    - cron: '0 3 * * *'
+  workflow_dispatch: # Permite rodar manualmente pelo botão no GitHub
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install PostgreSQL Client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Run pg_dump
+        run: |
+          # Extrai apenas os dados e a estrutura do schema public
+          pg_dump "${{ secrets.SUPABASE_DB_URL }}" > backup_database.sql
+
+      - name: Commit and Push backup
+        run: |
+          git config --global user.name "Backup Bot"
+          git config --global user.email "bot@guapimirim.com"
+          git add backup_database.sql
+          git commit -m "Auto-backup: $(date +'%Y-%m-%d %H:%M')" || echo "Sem alterações para salvar"
+          git push

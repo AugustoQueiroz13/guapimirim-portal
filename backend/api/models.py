@@ -1,9 +1,34 @@
 from django.db import models
 from django.utils.text import slugify
 
+# --- COMERCIO ---
+class Comercio(models.Model):
+    CATEGORIAS_CHOICES = [
+        ('MERCADO', 'Mercado'),
+        ('FARMACIA', 'Farmácia'),
+        ('PETSHOP', 'Pet-Shop'),
+        ('VESTUARIO', 'Vestuário'),
+        ('ELETRONICOS', 'Eletrônicos'),
+        ('SERVICOS', 'Serviços'),
+        ('VARIEDADES', 'Variedades'),
+    ]
+
+    nome = models.CharField(max_length=100)
+    categoria = models.CharField(max_length=50, choices=CATEGORIAS_CHOICES, default='VARIEDADES')
+    descricao = models.TextField(blank=True)
+    bairro = models.CharField(max_length=50)
+    endereco = models.CharField(max_length=255)
+    telefone = models.CharField(max_length=20)
+    foto = models.ImageField(upload_to='comercio/', null=True, blank=True)
+    instagram = models.URLField(max_length=200, blank=True, null=True)
+    destaque = models.BooleanField(default=False)
+
+    def __clstr__(self):
+        return self.nome
+
 # --- TURISMO ---
 class Turismo(models.Model):
-    nome = models.CharField(max_length=200)
+    nome = models.CharField(max_length=200, default='Nome Aqui')
     slug = models.SlugField(unique=True, blank=True) # Ex: dedo-de-deus
     foto = models.ImageField(upload_to='turismo/', null=True, blank=True)
     bairro = models.CharField(max_length=100)
@@ -29,22 +54,18 @@ class Turismo(models.Model):
 class TurismoFoto(models.Model):
     turismo = models.ForeignKey(Turismo, related_name='album', on_delete=models.CASCADE)
     arquivo = models.ImageField(upload_to='turismo/galeria/')
+    CATEGORIAS_TUR = [
+        ('CACHOEIRAS', 'Cachoeiras'),
+        ('TRILHAS', 'Trilhas'),
+        ('HISTORIA', 'História'),
+        ('PARQUES', 'Parques'),
+    ]
 
     def __str__(self):
         return f"Foto de {self.turismo.nome}"
 
-# --- COMÉRCIO E SERVIÇOS ---
-class Comercio(models.Model):
-    CATEGORIAS = [
-        ('FARMACIA', 'Farmácia'),
-        ('MERCADO', 'Mercado'),
-        ('SERVICOS', 'Serviços'),
-        ('PETSHOP', 'Pet Shop'),
-        ('OUTROS', 'Outros'),
-    ]
-
-    nome = models.CharField(max_length=100)
-    categoria = models.CharField(max_length=20, choices=CATEGORIAS)
+    nome = models.CharField(max_length=100, default='Sem Nome')
+    categoria = models.CharField(max_length=20, choices=CATEGORIAS_TUR, default='CACHOEIRAS')
     subcategoria = models.CharField(max_length=50, blank=True, help_text="Ex: Oficina, Estética, Papelaria")
     
     # Imagem opcional para logo ou fachada
@@ -52,11 +73,11 @@ class Comercio(models.Model):
     
     bairro = models.CharField(max_length=50, default="Centro")
     endereco = models.CharField(max_length=255, blank=True)
-    telefone = models.CharField(max_length=20, help_text="Apenas números, ex: 21999999999")
+    telefone = models.CharField(max_length=20, null=True, blank=True)
     instagram = models.CharField(max_length=100, blank=True)
     destaque = models.BooleanField(default=False)
-    criado_em = models.DateTimeField(auto_now_add=True)
-
+    criado_em = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    
     def __str__(self):
         return self.nome
 

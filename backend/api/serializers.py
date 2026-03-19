@@ -1,5 +1,10 @@
 from rest_framework import serializers
-from .models import Turismo, TurismoFoto, Hospedagem, Gastronomia, Comercio, HorarioOnibus
+from .models import Turismo, Comercio, TurismoFoto, Hospedagem, Gastronomia, Comercio, HorarioOnibus
+
+class ComercioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comercio
+        fields = '__all__'
 
 class TurismoFotoSerializer(serializers.ModelSerializer):
     class Meta:
