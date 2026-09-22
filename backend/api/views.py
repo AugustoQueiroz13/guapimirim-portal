@@ -142,7 +142,7 @@ class CriarCheckoutOuroView(APIView):
 
             # Chamada para API da InfinitePay
             payload = {
-                "handle": "graficadelivery",
+                "handle": "eletrofox",
                 "items": [
                     {
                         "quantity": 1,
