@@ -83,7 +83,7 @@ export default function AnunciePage() {
     ];
 
     // Manipuladores de Mudança do Formulário
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
         if (type === "checkbox") {
             const checked = (e.target as HTMLInputElement).checked;
