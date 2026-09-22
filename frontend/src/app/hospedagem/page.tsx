@@ -4,13 +4,14 @@ import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import {
     Bed, MapPin, Phone, MessageCircle, ArrowLeft,
-    ExternalLink, LayoutGrid, Building, Home, Tent
+    ExternalLink, LayoutGrid, Building, Home, Tent, Star
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Hospedagem {
     id: number;
+    slug: string;
     nome: string;
     tipo: string;
     descricao: string;
@@ -21,6 +22,7 @@ interface Hospedagem {
     site_reserva: string;
     cafe_da_manha: boolean;
     pet_friendly: boolean;
+    destaque: boolean;
 }
 
 export default function HospedagemPage() {
@@ -67,7 +69,6 @@ export default function HospedagemPage() {
             <Header />
 
             <main className="flex-grow font-sans antialiased text-[#2D3A30]">
-                {/* Hero Section - Caminho corrigido */}
                 <header className="relative bg-[#1B3022] pt-48 pb-40 rounded-b-[4rem] shadow-2xl overflow-hidden text-center">
                     <div className="absolute inset-0 z-0">
                         <img
@@ -87,7 +88,6 @@ export default function HospedagemPage() {
                 </header>
 
                 <div className="max-w-7xl mx-auto px-6 relative z-20">
-                    {/* Navegação de Filtros */}
                     <nav className="flex justify-center md:justify-start gap-3 -mt-8 overflow-x-auto pb-6 scrollbar-hide">
                         {[
                             { id: "TODOS", label: "Tudo", icon: LayoutGrid },
@@ -124,73 +124,116 @@ export default function HospedagemPage() {
                                 ) : (
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                         <AnimatePresence mode="popLayout">
-                                            {pousadasFiltradas.map((pousada) => (
-                                                <motion.div
-                                                    key={pousada.id}
-                                                    layout
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    exit={{ opacity: 0, scale: 0.95 }}
-                                                    className="bg-white rounded-[3rem] overflow-hidden shadow-xl border border-emerald-50 group hover:-translate-y-2 transition-all duration-300 flex flex-col h-full"
-                                                >
-                                                    {/* Imagem */}
-                                                    <div className="h-48 bg-emerald-100 relative overflow-hidden flex-shrink-0">
-                                                        {pousada.foto ? (
-                                                            <img src={pousada.foto} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={pousada.nome} />
-                                                        ) : (
-                                                            <div className="w-full h-full flex flex-col items-center justify-center text-emerald-800/20">
-                                                                <Bed size={48} />
-                                                                <span className="text-[10px] font-black uppercase mt-2">Sem foto</span>
-                                                            </div>
-                                                        )}
-                                                        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] font-black uppercase text-emerald-700 shadow-sm">
-                                                            {pousada.bairro}
-                                                        </div>
+                                            {pousadasFiltradas.map((pousada) => {
 
-                                                        {/* Tags de Diferenciais */}
-                                                        <div className="absolute bottom-4 left-4 flex gap-2">
-                                                            {pousada.pet_friendly && (
-                                                                <span className="bg-[#1B3022]/90 backdrop-blur px-2 py-1 rounded-lg text-[8px] font-bold uppercase text-emerald-400 shadow-sm">Pet Friendly</span>
+                                                const cardContent = (
+                                                    <>
+                                                        <div className="h-48 bg-emerald-100 relative overflow-hidden flex-shrink-0">
+                                                            {pousada.destaque && (
+                                                                <div className="absolute top-4 left-4 z-20 bg-yellow-400 text-yellow-900 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-md flex items-center gap-1.5">
+                                                                    <Star size={12} className="fill-yellow-900" /> Destaque da Cidade
+                                                                </div>
                                                             )}
-                                                            {pousada.cafe_da_manha && (
-                                                                <span className="bg-emerald-500/90 backdrop-blur px-2 py-1 rounded-lg text-[8px] font-bold uppercase text-white shadow-sm">Café Incluso</span>
+
+                                                            {pousada.foto ? (
+                                                                <img src={pousada.foto} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={pousada.nome} />
+                                                            ) : (
+                                                                <div className="w-full h-full flex flex-col items-center justify-center text-emerald-800/20">
+                                                                    <Bed size={48} />
+                                                                    <span className="text-[10px] font-black uppercase mt-2">Sem foto</span>
+                                                                </div>
                                                             )}
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="p-8 space-y-4 flex flex-col flex-grow">
-                                                        <div>
-                                                            <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1">{pousada.tipo}</p>
-                                                            <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022] leading-none mb-2">{pousada.nome}</h3>
-                                                            <p className="text-gray-500 text-xs font-medium leading-relaxed italic line-clamp-3">
-                                                                {pousada.descricao}
-                                                            </p>
-                                                        </div>
-
-                                                        <div className="pt-4 border-t border-emerald-50 mt-auto space-y-3">
-                                                            {/* Endereço - Padronizado: Preto e Maior */}
-                                                            <div className="flex items-start gap-2 text-black">
-                                                                <MapPin size={14} className="mt-0.5 text-emerald-600" />
-                                                                <p className="text-sm font-bold leading-tight">{pousada.endereco}</p>
+                                                            <div className={`absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] font-black uppercase ${pousada.destaque ? 'text-yellow-700' : 'text-emerald-700'} shadow-sm z-10`}>
+                                                                {pousada.bairro}
                                                             </div>
 
-                                                            <div className="flex flex-wrap gap-3 pt-2">
-                                                                <a href={`tel:${pousada.telefone}`} className="flex items-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase hover:text-emerald-600 transition-colors bg-emerald-50 px-3 py-2 rounded-xl flex-1 justify-center">
-                                                                    <Phone size={12} className="text-emerald-500" /> Ligar
-                                                                </a>
-                                                                <a href={getWhatsappLink(pousada.telefone)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-white font-black text-[9px] uppercase hover:bg-emerald-600 transition-colors bg-emerald-500 px-3 py-2 rounded-xl flex-1 justify-center shadow-md">
-                                                                    <MessageCircle size={12} /> WhatsApp
-                                                                </a>
-                                                                {pousada.site_reserva && (
-                                                                    <a href={pousada.site_reserva} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase hover:bg-gray-100 transition-colors border border-gray-200 px-3 py-2 rounded-xl">
-                                                                        Site <ExternalLink size={10} />
-                                                                    </a>
+                                                            <div className="absolute bottom-4 left-4 flex gap-2 z-10">
+                                                                {pousada.pet_friendly && (
+                                                                    <span className="bg-[#1B3022]/90 backdrop-blur px-2 py-1 rounded-lg text-[8px] font-bold uppercase text-emerald-400 shadow-sm">Pet Friendly</span>
+                                                                )}
+                                                                {pousada.cafe_da_manha && (
+                                                                    <span className="bg-emerald-500/90 backdrop-blur px-2 py-1 rounded-lg text-[8px] font-bold uppercase text-white shadow-sm">Café Incluso</span>
                                                                 )}
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </motion.div>
-                                            ))}
+
+                                                        <div className="p-8 space-y-4 flex flex-col flex-grow">
+                                                            <div>
+                                                                <p className={`text-[9px] font-black ${pousada.destaque ? 'text-yellow-600' : 'text-emerald-600'} uppercase tracking-widest mb-1`}>{pousada.tipo}</p>
+                                                                <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022] leading-none mb-2">{pousada.nome}</h3>
+                                                                <p className="text-gray-500 text-xs font-medium leading-relaxed italic line-clamp-3">
+                                                                    {pousada.descricao}
+                                                                </p>
+                                                            </div>
+
+                                                            <div className="pt-4 border-t border-emerald-50 mt-auto space-y-3">
+                                                                <div className="flex items-start gap-2 text-black">
+                                                                    <MapPin size={14} className="mt-0.5 text-emerald-600" />
+                                                                    <p className="text-sm font-bold leading-tight">{pousada.endereco}</p>
+                                                                </div>
+
+                                                                <div className="flex flex-wrap gap-3 pt-2">
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            e.preventDefault();
+                                                                            e.stopPropagation();
+                                                                            window.location.href = `tel:${pousada.telefone}`;
+                                                                        }}
+                                                                        className="flex items-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase hover:text-emerald-600 transition-colors bg-emerald-50 px-3 py-2 rounded-xl flex-1 justify-center"
+                                                                    >
+                                                                        <Phone size={12} className="text-emerald-500" /> Ligar
+                                                                    </button>
+
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            e.preventDefault();
+                                                                            e.stopPropagation();
+                                                                            window.open(getWhatsappLink(pousada.telefone), '_blank');
+                                                                        }}
+                                                                        className="flex items-center gap-1.5 text-white font-black text-[9px] uppercase hover:bg-emerald-600 transition-colors bg-emerald-500 px-3 py-2 rounded-xl flex-1 justify-center shadow-md"
+                                                                    >
+                                                                        <MessageCircle size={12} /> WhatsApp
+                                                                    </button>
+
+                                                                    {pousada.site_reserva && (
+                                                                        <button
+                                                                            onClick={(e) => {
+                                                                                e.preventDefault();
+                                                                                e.stopPropagation();
+                                                                                window.open(pousada.site_reserva, '_blank');
+                                                                            }}
+                                                                            className="flex items-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase hover:bg-gray-100 transition-colors border border-gray-200 px-3 py-2 rounded-xl"
+                                                                        >
+                                                                            Site <ExternalLink size={10} />
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                );
+
+                                                return (
+                                                    <motion.div
+                                                        key={pousada.id}
+                                                        layout
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, scale: 0.95 }}
+                                                        className={`bg-white rounded-[3rem] overflow-hidden shadow-xl border ${pousada.destaque ? 'border-yellow-400 shadow-yellow-500/20 ring-2 ring-yellow-400/50' : 'border-emerald-50'} group hover:-translate-y-2 transition-all duration-300 flex flex-col h-full`}
+                                                    >
+                                                        {pousada.destaque ? (
+                                                            <Link href={`/${pousada.slug}`} className="flex flex-col flex-grow">
+                                                                {cardContent}
+                                                            </Link>
+                                                        ) : (
+                                                            <div className="flex flex-col flex-grow">
+                                                                {cardContent}
+                                                            </div>
+                                                        )}
+                                                    </motion.div>
+                                                );
+                                            })}
                                         </AnimatePresence>
                                     </div>
                                 )}

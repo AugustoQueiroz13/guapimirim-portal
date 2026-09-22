@@ -28,3 +28,4 @@ frontend/.yarn/*
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+futures.txt

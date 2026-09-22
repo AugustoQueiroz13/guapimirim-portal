@@ -1,6 +1,6 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.utils.html import format_html
-from .models import Turismo, TurismoFoto, Comercio, Gastronomia, Hospedagem, HorarioOnibus
+from .models import Turismo, TurismoFoto, Comercio, Gastronomia, Hospedagem, HorarioOnibus, CadastroGratuito, Evento
 
 class TurismoFotoInline(admin.TabularInline):
     model = TurismoFoto
@@ -63,3 +63,34 @@ class HorarioOnibusAdmin(admin.ModelAdmin):
             'fields': ('horarios', 'observacoes')
         }),
     )
+
+@admin.register(CadastroGratuito)
+class CadastroGratuitoAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'categoria', 'telefone', 'criado_em', 'analisado')
+    list_filter = ('analisado', 'categoria', 'criado_em')
+    search_fields = ('nome', 'telefone', 'endereco')
+    list_editable = ('analisado',)
+    
+    # Chama a função que criamos logo abaixo
+    actions = ['aprovar_cadastros']
+
+    @admin.action(description="Aprovar e Publicar Selecionados")
+    def aprovar_cadastros(self, request, queryset):
+        sucesso = 0
+        for cadastro in queryset:
+            if cadastro.analisado:
+                continue 
+            
+            # Usa o método centralizado do modelo que copia TODOS os dados
+            cadastro.publicar_estabelecimento()
+            sucesso += 1
+            
+        self.message_user(request, f"{sucesso} cadastros foram aprovados e publicados com sucesso.")
+    
+
+@admin.register(Evento)
+class EventoAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'categoria', 'data_hora', 'ativo', 'criado_em')
+    list_filter = ('ativo', 'categoria')
+    search_fields = ('titulo', 'local')
+    list_editable = ('ativo',)

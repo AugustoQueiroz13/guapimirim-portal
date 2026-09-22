@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Turismo, Comercio, TurismoFoto, Hospedagem, Gastronomia, Comercio, HorarioOnibus
+from .models import Turismo, Comercio, TurismoFoto, Hospedagem, Gastronomia, HorarioOnibus, CadastroGratuito
 
 class ComercioSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,11 +23,6 @@ class HorarioOnibusSerializer(serializers.ModelSerializer):
         model = HorarioOnibus
         fields = '__all__'
 
-class ComercioSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comercio
-        fields = '__all__'
-
 class HospedagemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hospedagem
@@ -36,4 +31,14 @@ class HospedagemSerializer(serializers.ModelSerializer):
 class GastronomiaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gastronomia
+        fields = '__all__'
+
+class CadastroGratuitoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CadastroGratuito
+        fields = '__all__'
+from .models import Evento
+class EventoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Evento
         fields = '__all__'

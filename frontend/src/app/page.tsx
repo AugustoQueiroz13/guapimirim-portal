@@ -1,15 +1,48 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "../components/Header";
 import {
   MapPin, Utensils, ShoppingBag, Bed, Camera, ArrowRight,
-  Star, ChevronRight, Megaphone, Compass, PhoneCall, Bus
+  Star, ChevronRight, Megaphone, Compass, PhoneCall, Bus,
+  Search, CloudSun, Calendar, Thermometer, Map
 } from "lucide-react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import Head from "next/head";
 import { sendGAEvent } from '@next/third-parties/google';
+
+const Counter = ({ end, suffix = "", label }: { end: number, suffix?: string, label: string }) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (isInView) {
+      let start = 0;
+      const duration = 2000;
+      const increment = end / (duration / 16);
+      const timer = setInterval(() => {
+        start += increment;
+        if (start >= end) {
+          setCount(end);
+          clearInterval(timer);
+        } else {
+          setCount(Math.ceil(start));
+        }
+      }, 16);
+      return () => clearInterval(timer);
+    }
+  }, [isInView, end]);
+
+  return (
+    <div ref={ref} className="text-center flex flex-col items-center p-4 bg-emerald-50/50 rounded-3xl border border-emerald-100">
+      <div className="text-4xl md:text-5xl font-black text-emerald-500 mb-1 drop-shadow-sm">{count}{suffix}</div>
+      <div className="text-[10px] md:text-xs uppercase tracking-widest font-bold text-[#1B3022]/60">{label}</div>
+    </div>
+  );
+};
 
 // Imagens espelhando o topo de cada categoria do portal
 const heroSlides = [
@@ -39,16 +72,45 @@ const heroSlides = [
   },
   {
     image: "/comercio.jpg",
-    subtitle: "Comércio",
-    title: "Compre Local",
-    desc: "Valorize o empreendedor da cidade"
+    subtitle: "Vitrine de Negócios",
+    title: "Essência da Cidade",
+    desc: "Valorize quem faz a cidade acontecer"
   }
 ];
 
 export default function HomePage() {
+  const router = useRouter();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [destaques, setDestaques] = useState<any[]>([]);
   const [loadingDestaques, setLoadingDestaques] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [eventos, setEventos] = useState<any[]>([]);
+  const [loadingEventos, setLoadingEventos] = useState(true);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/comercio`);
+    }
+  };
+
+  // Busca eventos reais do Django
+  useEffect(() => {
+    async function fetchEventos() {
+      try {
+        const res = await fetch('http://127.0.0.1:8000/api/eventos/');
+        if (res.ok) {
+          const data = await res.json();
+          setEventos(data);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar eventos no banco:", error);
+      } finally {
+        setLoadingEventos(false);
+      }
+    }
+    fetchEventos();
+  }, []);
 
   // Troca automática do Hero
   useEffect(() => {
@@ -76,11 +138,11 @@ export default function HomePage() {
           return lista
             .filter(item => item.destaque === true)
             .map(item => ({
-              id: `${baseLink}-${item.id}`,
+              id: item.slug || `${baseLink}-${item.id}`,
               nome: item.nome,
               categoria: item.categoria || categoriaPadrao,
               foto: item.foto,
-              link: `/${baseLink}`
+              link: `/${item.slug}`
             }));
         };
 
@@ -133,7 +195,7 @@ export default function HomePage() {
             </motion.div>
           </AnimatePresence>
 
-          <div className="max-w-4xl mx-auto px-6 relative z-10 space-y-6 h-40 flex flex-col justify-center mt-10">
+          <div className="max-w-4xl mx-auto px-6 relative z-10 space-y-6 h-auto flex flex-col justify-center mt-10">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentSlide}
@@ -141,6 +203,7 @@ export default function HomePage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5 }}
+                className="mb-8"
               >
                 <span className="text-emerald-400 font-black text-xs uppercase tracking-[0.4em] drop-shadow-md block mb-4">
                   {heroSlides[currentSlide].subtitle}
@@ -153,6 +216,34 @@ export default function HomePage() {
                 </p>
               </motion.div>
             </AnimatePresence>
+
+            {/* Smart Search Bar */}
+            <motion.form 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              onSubmit={handleSearch}
+              className="relative max-w-2xl mx-auto w-full group"
+            >
+              <div className="absolute inset-0 bg-white/10 backdrop-blur-md rounded-full border border-white/20 shadow-2xl transition-all group-hover:bg-white/20"></div>
+              <div className="relative flex items-center p-2">
+                <div className="pl-6 text-white/70">
+                  <Search size={24} />
+                </div>
+                <input 
+                  type="text" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="O que você está buscando hoje?" 
+                  className="w-full bg-transparent border-none outline-none text-white placeholder-white/70 px-4 py-4 font-medium text-lg"
+                />
+                <button type="submit" className="bg-emerald-500 hover:bg-emerald-400 text-white px-8 py-4 rounded-full font-black uppercase text-xs tracking-widest transition-all shadow-lg">
+                  Buscar
+                </button>
+              </div>
+            </motion.form>
+
+
           </div>
 
           <div className="absolute bottom-40 left-0 right-0 flex justify-center gap-2 z-10">
@@ -164,12 +255,35 @@ export default function HomePage() {
               />
             ))}
           </div>
+
+          {/* Weather Widget (Moved to bottom right of Hero) */}
+          {/* Weather Widget (Moved to top left of Hero) */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+            className="absolute top-[100px] left-6 md:left-12 hidden md:flex flex-col gap-2 z-20"
+          >
+            <div className="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-3xl shadow-2xl">
+              <div className="bg-emerald-500/20 p-3 rounded-2xl">
+                <CloudSun className="text-emerald-300 w-8 h-8" />
+              </div>
+              <div className="text-left">
+                <div className="text-white font-black text-2xl leading-none">26°C</div>
+                <div className="text-emerald-200 text-[10px] uppercase tracking-widest font-bold">Guapimirim</div>
+              </div>
+            </div>
+            {/* Mensagem Condicional de Sol */}
+            <div className="bg-emerald-500/80 backdrop-blur px-4 py-2 rounded-xl border border-emerald-400/50 shadow-lg text-white text-[10px] uppercase tracking-widest font-black flex items-center justify-center">
+              Ótimo dia para se aventurar
+            </div>
+          </motion.div>
         </header>
 
         <div className="max-w-7xl mx-auto px-6 relative z-20 -mt-24">
 
           {/* MENU DE ACESSO RÁPIDO */}
-          <section className="mb-20">
+          <motion.section initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="mb-20">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
                 { label: "Turismo", href: "/turismo", icon: Camera, color: "bg-emerald-500", event: "nav_turismo" },
@@ -190,10 +304,10 @@ export default function HomePage() {
                 </Link>
               ))}
             </div>
-          </section>
+          </motion.section>
 
           {/* INTRODUÇÃO À CIDADE COM FOTO */}
-          <section className="mb-20 flex flex-col lg:flex-row items-center gap-12 bg-white rounded-[4rem] p-8 md:p-12 shadow-2xl border border-emerald-50">
+          <motion.section initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="mb-20 flex flex-col lg:flex-row items-center gap-12 bg-white rounded-[4rem] p-8 md:p-12 shadow-2xl border border-emerald-50">
             <div className="flex-1 space-y-6">
               <div className="inline-flex items-center gap-2 text-emerald-500">
                 <Compass size={20} />
@@ -213,92 +327,93 @@ export default function HomePage() {
             </div>
             <div className="flex-1 w-full h-[350px] lg:h-[450px]">
               <img
-                src="/baia_de_ganabara.jfif"
-                alt="Vista de Guapimirim"
+                src="/pedra_do_sino.webp"
+                alt="Turismo em Guapimirim"
                 className="w-full h-full object-cover rounded-[3rem] shadow-xl"
               />
             </div>
-          </section>
+          </motion.section>
 
-          {/* SERVIÇOS ÚTEIS (Movidos para cá, agora com Transporte Público) */}
-          <section className="mb-28 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Link href="/telefones-uteis" className="bg-[#1B3022] p-8 rounded-[3rem] shadow-xl flex flex-col items-center justify-center text-center group hover:-translate-y-1 transition-transform">
-              <div className="bg-emerald-500/20 p-5 rounded-full group-hover:bg-emerald-500/40 transition-colors mb-4">
-                <PhoneCall className="text-emerald-400 w-8 h-8" />
+          {/* CONTADORES ANIMADOS DE AUTORIDADE */}
+          <motion.section initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="mb-28">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Counter end={100} suffix="+" label="Estabelecimentos" />
+              <Counter end={50} suffix="+" label="Cachoeiras" />
+              <Counter end={365} label="Dias de Natureza" />
+            </div>
+          </motion.section>
+
+          {/* SERVIÇOS ÚTEIS PADRONIZADOS */}
+          <motion.section initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="mb-28 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Link href="/telefones-uteis" className="bg-emerald-600 p-8 rounded-[3rem] shadow-xl flex flex-col items-center justify-center text-center group hover:-translate-y-1 transition-transform">
+              <div className="bg-white/20 p-5 rounded-full group-hover:bg-white/30 transition-colors mb-4">
+                <PhoneCall className="text-white w-8 h-8" />
               </div>
               <h3 className="text-xl font-black uppercase tracking-tighter text-white">Telefones Úteis</h3>
-              <p className="text-emerald-400 font-bold text-[10px] uppercase tracking-widest mt-2">Serviço ao Cidadão</p>
+              <p className="text-emerald-100 font-bold text-[10px] uppercase tracking-widest mt-2">Serviço ao Cidadão</p>
             </Link>
 
-            <Link href="/como-chegar" className="bg-white p-8 rounded-[3rem] shadow-xl border border-emerald-50 flex flex-col items-center justify-center text-center group hover:-translate-y-1 transition-transform">
-              <div className="bg-emerald-50 p-5 rounded-full group-hover:bg-emerald-100 transition-colors mb-4">
-                <MapPin className="text-emerald-600 w-8 h-8" />
+            <Link href="/como-chegar" className="bg-emerald-600 p-8 rounded-[3rem] shadow-xl flex flex-col items-center justify-center text-center group hover:-translate-y-1 transition-transform">
+              <div className="bg-white/20 p-5 rounded-full group-hover:bg-white/30 transition-colors mb-4">
+                <MapPin className="text-white w-8 h-8" />
               </div>
-              <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022]">Como Chegar</h3>
-              <p className="text-emerald-500 font-bold text-[10px] uppercase tracking-widest mt-2">Planeje sua viagem</p>
+              <h3 className="text-xl font-black uppercase tracking-tighter text-white">Como Chegar</h3>
+              <p className="text-emerald-100 font-bold text-[10px] uppercase tracking-widest mt-2">Planeje sua viagem</p>
             </Link>
 
-            <Link href="/horarios-onibus" className="bg-white p-8 rounded-[3rem] shadow-xl border border-emerald-50 flex flex-col items-center justify-center text-center group hover:-translate-y-1 transition-transform">
-              <div className="bg-emerald-50 p-5 rounded-full group-hover:bg-emerald-100 transition-colors mb-4">
-                <Bus className="text-emerald-600 w-8 h-8" />
+            <Link href="/horarios-onibus" className="bg-emerald-600 p-8 rounded-[3rem] shadow-xl flex flex-col items-center justify-center text-center group hover:-translate-y-1 transition-transform">
+              <div className="bg-white/20 p-5 rounded-full group-hover:bg-white/30 transition-colors mb-4">
+                <Bus className="text-white w-8 h-8" />
               </div>
-              <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022]">Transporte Público</h3>
-              <p className="text-emerald-500 font-bold text-[10px] uppercase tracking-widest mt-2">Horários de Ônibus</p>
+              <h3 className="text-xl font-black uppercase tracking-tighter text-white">Transporte Público</h3>
+              <p className="text-emerald-100 font-bold text-[10px] uppercase tracking-widest mt-2">Horários de Ônibus</p>
             </Link>
-          </section>
+          </motion.section>
 
-          {/* ROLO DE DESTAQUES REAIS DO DJANGO */}
-          <section className="mb-28">
-            <div className="flex items-end justify-between mb-8">
-              <div>
-                <div className="inline-flex items-center gap-2 text-emerald-500 mb-2">
-                  <Star size={16} fill="currentColor" />
-                  <span className="font-black text-[10px] uppercase tracking-widest">Recomendações do Portal</span>
+          {/* MINI AGENDA DA SEMANA */}
+          {(!loadingEventos && eventos.length > 0) && (
+            <motion.section 
+              initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }}
+              className="mb-28"
+            >
+              <div className="flex items-end justify-between mb-8">
+                <div>
+                  <div className="inline-flex items-center gap-2 text-emerald-500 mb-2">
+                    <Calendar size={16} />
+                    <span className="font-black text-[10px] uppercase tracking-widest">O que fazer</span>
+                  </div>
+                  <h2 className="text-[#1B3022] text-4xl font-black uppercase tracking-tighter">Eventos Locais</h2>
                 </div>
-                <h2 className="text-[#1B3022] text-4xl font-black uppercase tracking-tighter">Destaques da Cidade</h2>
               </div>
-            </div>
-
-            {loadingDestaques ? (
-              <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-hide">
-                {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="min-w-[280px] md:min-w-[320px] h-64 bg-emerald-50 rounded-[3rem] animate-pulse border border-emerald-100 flex-shrink-0"></div>
-                ))}
-              </div>
-            ) : destaques.length > 0 ? (
-              <div className="flex gap-6 overflow-x-auto pb-8 pt-4 scrollbar-hide snap-x snap-mandatory -mx-6 px-6 md:mx-0 md:px-0">
-                {destaques.map((item) => (
-                  <Link href={item.link} key={item.id} className="min-w-[280px] md:min-w-[320px] snap-center group block">
-                    <div className="bg-white rounded-[3rem] p-4 shadow-xl border border-emerald-50 hover:-translate-y-2 transition-transform duration-300 h-full">
-                      <div className="h-48 rounded-[2rem] overflow-hidden relative mb-6 bg-emerald-100 flex items-center justify-center">
-                        {item.foto ? (
-                          <img src={item.foto} alt={item.nome} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                        ) : (
-                          <Star className="text-emerald-300 w-12 h-12" />
-                        )}
-                        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] font-black uppercase text-emerald-700 shadow-sm">
-                          {item.categoria}
-                        </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {eventos.map((evento) => {
+                  let tagColor = "bg-emerald-100 text-emerald-600";
+                  if (evento.categoria === 'GASTRONOMIA') tagColor = "bg-orange-100 text-orange-600";
+                  if (evento.categoria === 'AVENTURA') tagColor = "bg-blue-100 text-blue-600";
+                  if (evento.categoria === 'CULTURA') tagColor = "bg-purple-100 text-purple-600";
+                  if (evento.categoria === 'ESPORTE') tagColor = "bg-red-100 text-red-600";
+                  if (evento.categoria === 'MUSICA') tagColor = "bg-pink-100 text-pink-600";
+                  
+                  return (
+                    <div key={evento.id} className="bg-white rounded-[3rem] p-6 shadow-xl border border-emerald-50 hover:-translate-y-2 transition-transform">
+                      <div className={`${tagColor} font-black text-xs uppercase px-3 py-1 rounded-full w-max mb-4`}>
+                        {evento.categoria}
                       </div>
-                      <div className="px-2 pb-2">
-                        <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022] mb-1 truncate">{item.nome}</h3>
-                        <p className="text-emerald-600 text-xs font-bold flex items-center gap-1 group-hover:text-emerald-500 transition-colors">
-                          Explorar <ChevronRight size={14} />
-                        </p>
+                      <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022] mb-2">{evento.titulo}</h3>
+                      <p className="text-gray-500 text-sm font-medium mb-4">{evento.descricao_curta}</p>
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs">
+                        <Calendar size={14} /> {evento.data_hora} - {evento.local}
                       </div>
                     </div>
-                  </Link>
-                ))}
+                  )
+                })}
               </div>
-            ) : (
-              <div className="bg-white border border-emerald-50 p-10 rounded-[3rem] text-center shadow-lg">
-                <p className="text-gray-500 font-medium">Nenhum destaque configurado no momento.</p>
-              </div>
-            )}
-          </section>
+            </motion.section>
+          )}
 
           {/* EXPLORE POR CATEGORIA */}
-          <section className="mb-32">
+          <motion.section initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="mb-32">
             <div className="text-center max-w-3xl mx-auto mb-16 space-y-6">
               <h2 className="text-[#1B3022] text-4xl font-black uppercase tracking-tighter">Tudo em um só lugar</h2>
               <p className="text-gray-600 text-lg font-medium leading-relaxed">
@@ -369,10 +484,60 @@ export default function HomePage() {
               </div>
 
             </div>
-          </section>
+          </motion.section>
+
+          {/* ROLO DE DESTAQUES REAIS DO DJANGO */}
+          <motion.section initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="mb-28">
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <div className="inline-flex items-center gap-2 text-emerald-500 mb-2">
+                  <Star size={16} fill="currentColor" />
+                  <span className="font-black text-[10px] uppercase tracking-widest">Recomendações do Portal</span>
+                </div>
+                <h2 className="text-[#1B3022] text-4xl font-black uppercase tracking-tighter">Destaques da Cidade</h2>
+              </div>
+            </div>
+
+            {loadingDestaques ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-8">
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="w-full h-64 bg-emerald-50 rounded-[3rem] animate-pulse border border-emerald-100"></div>
+                ))}
+              </div>
+            ) : destaques.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-8 pt-4">
+                {destaques.map((item) => (
+                  <Link href={item.link} key={item.id} className="group block h-full">
+                    <div className="bg-white rounded-[3rem] p-4 shadow-xl border border-emerald-50 hover:-translate-y-2 transition-transform duration-300 h-full flex flex-col">
+                      <div className="h-48 rounded-[2rem] overflow-hidden relative mb-6 bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                        {item.foto ? (
+                          <img src={item.foto} alt={item.nome} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                        ) : (
+                          <Star className="text-emerald-300 w-12 h-12" />
+                        )}
+                        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] font-black uppercase text-emerald-700 shadow-sm">
+                          {item.categoria}
+                        </div>
+                      </div>
+                      <div className="px-2 pb-2 mt-auto">
+                        <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022] mb-1 truncate">{item.nome}</h3>
+                        <p className="text-emerald-600 text-xs font-bold flex items-center gap-1 group-hover:text-emerald-500 transition-colors">
+                          Acessar página <ChevronRight size={14} />
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white border border-emerald-50 p-10 rounded-[3rem] text-center shadow-lg">
+                <p className="text-gray-500 font-medium">Nenhum destaque configurado no momento.</p>
+              </div>
+            )}
+          </motion.section>
 
           {/* SEÇÃO DE PUBLICIDADE NO FINAL */}
-          <section className="mb-20">
+          <motion.section initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="mb-20">
             <div className="bg-[#1B3022] rounded-[3rem] p-8 md:p-12 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -390,7 +555,7 @@ export default function HomePage() {
                 Conheça os Planos <ArrowRight size={16} />
               </Link>
             </div>
-          </section>
+          </motion.section>
 
         </div>
       </main>

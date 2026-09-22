@@ -6,10 +6,12 @@ import Footer from "../../components/Footer";
 import {
     MapPin, Car, Train, Bus, Utensils, ShoppingBag,
     Bed, Camera, ArrowRight, Info, Map as MapIcon, Layers,
-    Mountain, Waves, Wind, Landmark, PhoneCall
+    Mountain, Waves, Wind, Landmark, PhoneCall,
+    ZoomIn, ZoomOut, Maximize
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Head from "next/head";
 import { sendGAEvent } from '@next/third-parties/google'; // Importação do rastreador
 
@@ -236,46 +238,79 @@ export default function ACidadePage() {
 
                             {/* Lado Direito: O Mapa Real */}
                             <div className="w-full md:w-2/3 relative bg-emerald-50/30 overflow-hidden flex items-center justify-center p-4">
-                                {/* Base do Mapa */}
+                                {/* Base do Mapa com Zoom */}
                                 <div className="relative w-full h-full max-w-[600px] aspect-square">
-                                    <img
-                                        src="/mapa_guapimirim.png" // Coloque sua imagem aqui na pasta public
-                                        alt="Mapa de Guapimirim"
-                                        className="w-full h-full object-contain drop-shadow-2xl"
-                                    />
-
-                                    {/* Marcadores Dinâmicos baseados em coordenadas % */}
-                                    <AnimatePresence>
-                                        {pontosTuristicos.map((ponto, index) => (
-                                            <motion.div
-                                                key={index}
-                                                initial={{ scale: 0 }}
-                                                animate={{ scale: 1 }}
-                                                className="absolute cursor-pointer group"
-                                                style={{ top: ponto.y, left: ponto.x }} // Usa as coordenadas do array
-                                                onClick={() => setSelectedPonto(ponto)}
-                                            >
-                                                {/* Pin do Mapa */}
-                                                <div className={`relative -translate-x-1/2 -translate-y-1/2 flex flex-col items-center`}>
-                                                    <div className={`p-2 rounded-full shadow-xl transition-all ${selectedPonto?.name === ponto.name ? "bg-emerald-500 scale-125 z-30" : "bg-white z-20"
-                                                        }`}>
-                                                        <MapPin size={16} className={selectedPonto?.name === ponto.name ? "text-white" : "text-emerald-600"} />
-                                                    </div>
-
-                                                    {/* Label flutuante no Pin */}
-                                                    {selectedPonto?.name === ponto.name && (
-                                                        <motion.div
-                                                            initial={{ opacity: 0, y: 10 }}
-                                                            animate={{ opacity: 1, y: -5 }}
-                                                            className="absolute bottom-full mb-2 bg-[#1B3022] text-white text-[10px] font-black px-3 py-1 rounded-lg whitespace-nowrap shadow-2xl z-40"
-                                                        >
-                                                            {ponto.name}
-                                                        </motion.div>
-                                                    )}
+                                    <TransformWrapper
+                                        initialScale={1}
+                                        minScale={0.8}
+                                        maxScale={4}
+                                        centerOnInit={true}
+                                        wheel={{ step: 0.1 }}
+                                    >
+                                        {({ zoomIn, zoomOut, resetTransform }) => (
+                                            <>
+                                                {/* Controles de Zoom Flutuantes */}
+                                                <div className="absolute top-4 right-4 z-50 flex flex-col gap-2">
+                                                    <button onClick={() => zoomIn()} className="bg-white p-2 rounded-xl shadow-lg border border-emerald-100 hover:bg-emerald-50 text-emerald-700 transition-colors" title="Aumentar Zoom">
+                                                        <ZoomIn size={20} />
+                                                    </button>
+                                                    <button onClick={() => zoomOut()} className="bg-white p-2 rounded-xl shadow-lg border border-emerald-100 hover:bg-emerald-50 text-emerald-700 transition-colors" title="Diminuir Zoom">
+                                                        <ZoomOut size={20} />
+                                                    </button>
+                                                    <button onClick={() => resetTransform()} className="bg-white p-2 rounded-xl shadow-lg border border-emerald-100 hover:bg-emerald-50 text-emerald-700 transition-colors" title="Resetar Mapa">
+                                                        <Maximize size={20} />
+                                                    </button>
                                                 </div>
-                                            </motion.div>
-                                        ))}
-                                    </AnimatePresence>
+
+                                                {/* Componente Transformável (Imagem + Markers) */}
+                                                <TransformComponent wrapperClass="w-full h-full" contentClass="w-full h-full">
+                                                    <div className="relative w-full h-full">
+                                                        <img
+                                                            src="/mapa_guapimirim.png"
+                                                            alt="Mapa de Guapimirim"
+                                                            className="w-full h-full object-contain drop-shadow-2xl cursor-grab active:cursor-grabbing"
+                                                        />
+
+                                                        {/* Marcadores Dinâmicos baseados em coordenadas % */}
+                                                        <AnimatePresence>
+                                                            {pontosTuristicos.map((ponto, index) => (
+                                                                <motion.div
+                                                                    key={index}
+                                                                    initial={{ scale: 0 }}
+                                                                    animate={{ scale: 1 }}
+                                                                    className="absolute cursor-pointer group"
+                                                                    style={{ top: ponto.y, left: ponto.x }}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation(); // Evita que o click arraste o mapa
+                                                                        setSelectedPonto(ponto);
+                                                                    }}
+                                                                >
+                                                                    {/* Pin do Mapa */}
+                                                                    <div className={`relative -translate-x-1/2 -translate-y-1/2 flex flex-col items-center`}>
+                                                                        <div className={`p-2 rounded-full shadow-xl transition-all ${selectedPonto?.name === ponto.name ? "bg-emerald-500 scale-125 z-30" : "bg-white z-20"
+                                                                            }`}>
+                                                                            <MapPin size={16} className={selectedPonto?.name === ponto.name ? "text-white" : "text-emerald-600"} />
+                                                                        </div>
+
+                                                                        {/* Label flutuante no Pin */}
+                                                                        {selectedPonto?.name === ponto.name && (
+                                                                            <motion.div
+                                                                                initial={{ opacity: 0, y: 10 }}
+                                                                                animate={{ opacity: 1, y: -5 }}
+                                                                                className="absolute bottom-full mb-2 bg-[#1B3022] text-white text-[10px] font-black px-3 py-1 rounded-lg whitespace-nowrap shadow-2xl z-40 pointer-events-none"
+                                                                            >
+                                                                                {ponto.name}
+                                                                            </motion.div>
+                                                                        )}
+                                                                    </div>
+                                                                </motion.div>
+                                                            ))}
+                                                        </AnimatePresence>
+                                                    </div>
+                                                </TransformComponent>
+                                            </>
+                                        )}
+                                    </TransformWrapper>
                                 </div>
 
                                 {/* Overlay de instrução caso nada esteja selecionado */}

@@ -6,13 +6,14 @@ import Footer from "../../components/Footer";
 import {
     Utensils, Coffee, Pizza, Beer, MapPin, Phone, Clock,
     MessageCircle, ArrowLeft, Bike, Leaf, LayoutGrid,
-    Sandwich, IceCream, Store
+    Sandwich, IceCream, Store, Star
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Restaurante {
     id: number;
+    slug: string;
     nome: string;
     categoria: string;
     especialidade: string;
@@ -23,6 +24,7 @@ interface Restaurante {
     horario?: string;
     delivery: boolean;
     vegano_vegetariano: boolean;
+    destaque: boolean;
 }
 
 export default function GastronomiaPage() {
@@ -127,81 +129,114 @@ export default function GastronomiaPage() {
                                 ) : (
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                         <AnimatePresence>
-                                            {restaurantesFiltrados.map((item) => (
-                                                <motion.div
-                                                    key={item.id}
-                                                    initial={{ opacity: 0, y: 20 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    exit={{ opacity: 0, scale: 0.95 }}
-                                                    className="bg-white rounded-[3rem] overflow-hidden shadow-xl border border-emerald-50 group hover:-translate-y-2 transition-all duration-300 flex flex-col h-full"
-                                                >
-                                                    {/* Imagem */}
-                                                    <div className="h-48 bg-emerald-100 relative overflow-hidden flex-shrink-0">
-                                                        {item.foto ? (
-                                                            <img src={item.foto} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.nome} />
-                                                        ) : (
-                                                            <div className="w-full h-full flex flex-col items-center justify-center text-emerald-800/20">
-                                                                <Utensils size={48} />
-                                                                <span className="text-[10px] font-black uppercase mt-2">Sem foto</span>
-                                                            </div>
-                                                        )}
-                                                        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] font-black uppercase text-emerald-700 shadow-sm">
-                                                            {item.bairro}
-                                                        </div>
+                                            {restaurantesFiltrados.map((item) => {
 
-                                                        {/* Tags de Diferenciais */}
-                                                        <div className="absolute bottom-4 left-4 flex gap-2">
-                                                            {item.delivery && (
-                                                                <span className="flex items-center gap-1 bg-amber-400/90 backdrop-blur px-2 py-1 rounded-lg text-[8px] font-black uppercase text-amber-900 shadow-sm">
-                                                                    <Bike size={10} /> Delivery
-                                                                </span>
-                                                            )}
-                                                            {item.vegano_vegetariano && (
-                                                                <span className="flex items-center gap-1 bg-green-600/90 backdrop-blur px-2 py-1 rounded-lg text-[8px] font-black uppercase text-white shadow-sm">
-                                                                    <Leaf size={10} /> Opção Veg
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="p-8 space-y-4 flex flex-col flex-grow">
-                                                        <div>
-                                                            <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1">{item.categoria.replace('_', ' ')}</p>
-                                                            <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022] leading-none mb-2">{item.nome}</h3>
-                                                            <p className="text-xs font-medium text-amber-600 italic border-l-2 border-amber-400 pl-2">
-                                                                {item.especialidade}
-                                                            </p>
-                                                        </div>
-
-                                                        {/* Horário e Endereço centralizados no corpo do card */}
-                                                        <div className="pt-4 border-t border-emerald-50 mt-auto space-y-3">
-
-                                                            {/* Horário de Funcionamento (Corrigido para cima do endereço) */}
-                                                            {item.horario && (
-                                                                <div className="flex items-center gap-2 text-black text-sm font-bold italic">
-                                                                    <Clock size={14} className="text-emerald-600" />
-                                                                    <span>{item.horario}</span>
+                                                const cardContent = (
+                                                    <>
+                                                        <div className="h-48 bg-emerald-100 relative overflow-hidden flex-shrink-0">
+                                                            {item.destaque && (
+                                                                <div className="absolute top-4 left-4 z-20 bg-yellow-400 text-yellow-900 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-md flex items-center gap-1.5">
+                                                                    <Star size={12} className="fill-yellow-900" /> Destaque da Cidade
                                                                 </div>
                                                             )}
 
-                                                            {/* Endereço */}
-                                                            <div className="flex items-start gap-2 text-black">
-                                                                <MapPin size={14} className="mt-0.5 text-emerald-400" />
-                                                                <p className="text-sm font-bold leading-tight">{item.endereco}</p>
+                                                            {item.foto ? (
+                                                                <img src={item.foto} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.nome} />
+                                                            ) : (
+                                                                <div className="w-full h-full flex flex-col items-center justify-center text-emerald-800/20">
+                                                                    <Utensils size={48} />
+                                                                    <span className="text-[10px] font-black uppercase mt-2">Sem foto</span>
+                                                                </div>
+                                                            )}
+                                                            <div className={`absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] font-black uppercase ${item.destaque ? 'text-yellow-700' : 'text-emerald-700'} shadow-sm z-10`}>
+                                                                {item.bairro}
                                                             </div>
 
-                                                            <div className="flex flex-wrap gap-3 pt-2">
-                                                                <a href={`tel:${item.telefone}`} className="flex items-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase hover:text-emerald-600 transition-colors bg-emerald-50 px-3 py-2 rounded-xl flex-1 justify-center">
-                                                                    <Phone size={12} className="text-emerald-500" /> Ligar
-                                                                </a>
-                                                                <a href={getWhatsappLink(item.telefone)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-white font-black text-[9px] uppercase hover:bg-emerald-600 transition-colors bg-emerald-500 px-3 py-2 rounded-xl flex-[2] justify-center shadow-lg shadow-emerald-200">
-                                                                    <MessageCircle size={12} /> Pedir / Reservar
-                                                                </a>
+                                                            <div className="absolute bottom-4 left-4 flex gap-2 z-10">
+                                                                {item.delivery && (
+                                                                    <span className="flex items-center gap-1 bg-amber-400/90 backdrop-blur px-2 py-1 rounded-lg text-[8px] font-black uppercase text-amber-900 shadow-sm">
+                                                                        <Bike size={10} /> Delivery
+                                                                    </span>
+                                                                )}
+                                                                {item.vegano_vegetariano && (
+                                                                    <span className="flex items-center gap-1 bg-green-600/90 backdrop-blur px-2 py-1 rounded-lg text-[8px] font-black uppercase text-white shadow-sm">
+                                                                        <Leaf size={10} /> Opção Veg
+                                                                    </span>
+                                                                )}
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </motion.div>
-                                            ))}
+
+                                                        <div className="p-8 space-y-4 flex flex-col flex-grow">
+                                                            <div>
+                                                                <p className={`text-[9px] font-black ${item.destaque ? 'text-yellow-600' : 'text-emerald-600'} uppercase tracking-widest mb-1`}>
+                                                                    {item.categoria.replace('_', ' ')}
+                                                                </p>
+                                                                <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022] leading-none mb-2">{item.nome}</h3>
+                                                                <p className="text-xs font-medium text-amber-600 italic border-l-2 border-amber-400 pl-2">
+                                                                    {item.especialidade}
+                                                                </p>
+                                                            </div>
+
+                                                            <div className="pt-4 border-t border-emerald-50 mt-auto space-y-3">
+                                                                {item.horario && (
+                                                                    <div className="flex items-center gap-2 text-black text-sm font-bold italic">
+                                                                        <Clock size={14} className="text-emerald-600" />
+                                                                        <span>{item.horario}</span>
+                                                                    </div>
+                                                                )}
+
+                                                                <div className="flex items-start gap-2 text-black">
+                                                                    <MapPin size={14} className="mt-0.5 text-emerald-400" />
+                                                                    <p className="text-sm font-bold leading-tight">{item.endereco}</p>
+                                                                </div>
+
+                                                                <div className="flex flex-wrap gap-3 pt-2">
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            e.preventDefault();
+                                                                            e.stopPropagation();
+                                                                            window.location.href = `tel:${item.telefone}`;
+                                                                        }}
+                                                                        className="flex items-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase hover:text-emerald-600 transition-colors bg-emerald-50 px-3 py-2 rounded-xl flex-1 justify-center"
+                                                                    >
+                                                                        <Phone size={12} className="text-emerald-500" /> Ligar
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={(e) => {
+                                                                            e.preventDefault();
+                                                                            e.stopPropagation();
+                                                                            window.open(getWhatsappLink(item.telefone), '_blank');
+                                                                        }}
+                                                                        className="flex items-center gap-1.5 text-white font-black text-[9px] uppercase hover:bg-emerald-600 transition-colors bg-emerald-500 px-3 py-2 rounded-xl flex-[2] justify-center shadow-lg shadow-emerald-200"
+                                                                    >
+                                                                        <MessageCircle size={12} /> WhatsApp
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                );
+
+                                                return (
+                                                    <motion.div
+                                                        key={item.id}
+                                                        initial={{ opacity: 0, y: 20 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, scale: 0.95 }}
+                                                        className={`bg-white rounded-[3rem] overflow-hidden shadow-xl border ${item.destaque ? 'border-yellow-400 shadow-yellow-500/20 ring-2 ring-yellow-400/50' : 'border-emerald-50'} group hover:-translate-y-2 transition-all duration-300 flex flex-col h-full`}
+                                                    >
+                                                        {item.destaque ? (
+                                                            <Link href={`/${item.slug}`} className="flex flex-col flex-grow">
+                                                                {cardContent}
+                                                            </Link>
+                                                        ) : (
+                                                            <div className="flex flex-col flex-grow">
+                                                                {cardContent}
+                                                            </div>
+                                                        )}
+                                                    </motion.div>
+                                                );
+                                            })}
                                         </AnimatePresence>
                                     </div>
                                 )}
@@ -210,7 +245,6 @@ export default function GastronomiaPage() {
                     </div>
                 </div>
             </main>
-
         </div>
     );
 }

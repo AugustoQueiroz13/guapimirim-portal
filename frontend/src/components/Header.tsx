@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, Bus, Utensils, ShoppingBag, MapPin, X, Bed, Landmark, Map } from "lucide-react";
+import { Menu, Bus, Utensils, ShoppingBag, MapPin, X, Bed, Landmark, Map, Home } from "lucide-react";
 import { useState } from "react";
 
 export default function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
 
     const navLinks = [
+        { label: "Início", href: "/", icon: Home },
         { label: "A Cidade", href: "/a-cidade", icon: Landmark },
         { label: "Como Chegar", href: "/como-chegar", icon: Map },
         { label: "Transporte", href: "/horarios", icon: Bus },
@@ -20,14 +21,25 @@ export default function Header() {
     return (
         <nav className="absolute top-0 left-0 w-full z-[100] font-sans">
             <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                {/* Logo Guia Guapimirim */}
-                <Link href="/" className="flex items-center gap-2 group">
-                    <div className="bg-emerald-500 p-1.5 rounded-xl group-hover:rotate-12 transition-transform shadow-lg shadow-emerald-900/20">
-                        <MapPin className="text-white w-6 h-6 fill-current" />
-                    </div>
+
+                {/* Logo Guia Guapimirim - Atualizado com a Logo Revisada */}
+                <Link href="/" className="flex items-center gap-3 group">
+                    {/* Imagem da Logo Revisada - Versão Branca Monocromática */}
+                    <img
+                        src="/logo-guia-guapi-white-rev.png"
+                        alt="Guia Guapi Logo - Dedo de Deus"
+                        className="w-10 h-10 object-contain group-hover:scale-105 transition-transform"
+                    />
+
                     <div className="flex flex-col">
-                        <span className="text-white font-black text-xl leading-none tracking-tighter uppercase">Guia Guapimirim</span>
-                        <span className="text-emerald-400 text-[10px] font-bold tracking-[0.1em] uppercase italic">Terra do Dedo de Deus</span>
+                        {/* Nome Principal (Texto Branco) */}
+                        <span className="text-white font-black text-xl leading-none tracking-tighter uppercase">
+                            Guia Guapimirim
+                        </span>
+                        {/* Subtítulo (Texto Esmeralda 400) */}
+                        <span className="text-emerald-400 text-[10px] font-bold tracking-[0.1em] uppercase italic">
+                            Terra do Dedo de Deus
+                        </span>
                     </div>
                 </Link>
 
@@ -45,6 +57,7 @@ export default function Header() {
                     ))}
                 </div>
 
+                {/* Menu Mobile Button */}
                 <button
                     onClick={() => setMenuOpen(!menuOpen)}
                     className="md:hidden text-white p-2 bg-white/10 backdrop-blur-md rounded-xl"
@@ -53,7 +66,7 @@ export default function Header() {
                 </button>
             </div>
 
-            {/* Menu Mobile */}
+            {/* Menu Mobile Overlay */}
             {menuOpen && (
                 <div className="md:hidden bg-[#1B3022]/95 backdrop-blur-xl border-t border-white/5 p-6 space-y-3 shadow-2xl">
                     {navLinks.map((item) => (

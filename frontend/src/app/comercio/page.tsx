@@ -5,13 +5,14 @@ import Header from "../../components/Header";
 import {
     ShoppingBag, MapPin, Phone, MessageCircle, ArrowLeft,
     LayoutGrid, Shirt, Smartphone, Wrench, Package, Search,
-    ShoppingCart, Pill, Dog // Novos ícones importados
+    ShoppingCart, Pill, Dog, Star
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Comercio {
     id: number;
+    slug: string;
     nome: string;
     categoria: string;
     descricao: string;
@@ -20,7 +21,7 @@ interface Comercio {
     telefone: string;
     foto: string | null;
     instagram: string;
-    destaque?: boolean; // Preparado para o recurso de destaque que conversamos
+    destaque?: boolean;
 }
 
 export default function ComercioPage() {
@@ -35,7 +36,7 @@ export default function ComercioPage() {
                 if (!response.ok) throw new Error('Erro ao buscar dados');
                 const data = await response.json();
 
-                // Opcional: Ordenar para que os destaques apareçam primeiro
+                // Ordenar para que os destaques apareçam primeiro
                 const dataOrdenada = data.sort((a: Comercio, b: Comercio) => {
                     if (a.destaque && !b.destaque) return -1;
                     if (!a.destaque && b.destaque) return 1;
@@ -86,7 +87,7 @@ export default function ComercioPage() {
                 </header>
 
                 <div className="max-w-7xl mx-auto px-6 relative z-20">
-                    {/* Filtros de Categorias Atualizados */}
+                    {/* Filtros de Categorias */}
                     <nav className="flex justify-center md:justify-start gap-3 -mt-8 overflow-x-auto pb-6 scrollbar-hide">
                         {[
                             { id: "TODOS", label: "Tudo", icon: LayoutGrid },
@@ -120,63 +121,91 @@ export default function ComercioPage() {
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 <AnimatePresence mode="popLayout">
-                                    {lojasFiltradas.map((loja) => (
-                                        <motion.div
-                                            key={loja.id}
-                                            layout
-                                            initial={{ opacity: 0, scale: 0.9 }}
-                                            animate={{ opacity: 1, scale: 1 }}
-                                            exit={{ opacity: 0, scale: 0.9 }}
-                                            className={`bg-white rounded-[3rem] overflow-hidden shadow-xl border flex flex-col h-full group hover:-translate-y-2 transition-all duration-300 ${loja.destaque ? 'border-amber-400 border-2' : 'border-emerald-50'}`}
-                                        >
-                                            <div className="h-48 bg-emerald-100 relative overflow-hidden flex-shrink-0">
-                                                {loja.foto ? (
-                                                    <img src={loja.foto} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={loja.nome} />
+                                    {lojasFiltradas.map((loja) => {
+
+                                        const cardContent = (
+                                            <>
+                                                <div className="h-48 bg-emerald-100 relative overflow-hidden flex-shrink-0">
+                                                    {loja.destaque && (
+                                                        <div className="absolute top-4 left-4 z-20 bg-yellow-400 text-yellow-900 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-md flex items-center gap-1.5">
+                                                            <Star size={12} className="fill-yellow-900" /> Destaque da Cidade
+                                                        </div>
+                                                    )}
+
+                                                    {loja.foto ? (
+                                                        <img src={loja.foto} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={loja.nome} />
+                                                    ) : (
+                                                        <div className="w-full h-full flex flex-col items-center justify-center text-emerald-800/20">
+                                                            <ShoppingBag size={48} />
+                                                        </div>
+                                                    )}
+
+                                                    <div className={`absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] font-black uppercase ${loja.destaque ? 'text-yellow-700' : 'text-emerald-700'} shadow-sm z-10`}>
+                                                        {loja.bairro}
+                                                    </div>
+                                                </div>
+
+                                                <div className="p-8 space-y-4 flex flex-col flex-grow">
+                                                    <div>
+                                                        <p className={`text-[9px] font-black ${loja.destaque ? 'text-yellow-600' : 'text-emerald-600'} uppercase tracking-widest mb-1`}>{loja.categoria}</p>
+                                                        <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022] leading-none mb-2">{loja.nome}</h3>
+                                                        <p className="text-gray-500 text-xs font-medium italic line-clamp-2 min-h-[32px]">{loja.descricao}</p>
+                                                    </div>
+
+                                                    <div className="pt-4 border-t border-emerald-50 mt-auto space-y-3">
+                                                        <div className="flex items-start gap-2 text-black">
+                                                            <MapPin size={14} className="mt-0.5 text-emerald-600 flex-shrink-0" />
+                                                            <p className="text-sm font-bold leading-tight">{loja.endereco}</p>
+                                                        </div>
+
+                                                        <div className="flex gap-3 pt-2">
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                    window.location.href = `tel:${loja.telefone}`;
+                                                                }}
+                                                                className="flex items-center justify-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase bg-emerald-50 px-3 py-2 rounded-xl flex-1 hover:bg-emerald-100 transition-colors"
+                                                            >
+                                                                <Phone size={12} className="text-emerald-500" /> Ligar
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                    window.open(getWhatsappLink(loja.telefone), '_blank');
+                                                                }}
+                                                                className="flex items-center justify-center gap-1.5 text-white font-black text-[9px] uppercase bg-emerald-500 px-3 py-2 rounded-xl flex-[2] hover:bg-emerald-600 shadow-md transition-colors shadow-emerald-200"
+                                                            >
+                                                                <MessageCircle size={12} /> WhatsApp
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        );
+
+                                        return (
+                                            <motion.div
+                                                key={loja.id}
+                                                layout
+                                                initial={{ opacity: 0, scale: 0.9 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.9 }}
+                                                className={`bg-white rounded-[3rem] overflow-hidden shadow-xl border flex flex-col h-full group hover:-translate-y-2 transition-all duration-300 ${loja.destaque ? 'border-yellow-400 shadow-yellow-500/20 ring-2 ring-yellow-400/50' : 'border-emerald-50'}`}
+                                            >
+                                                {loja.destaque ? (
+                                                    <Link href={`/${loja.slug}`} className="flex flex-col flex-grow">
+                                                        {cardContent}
+                                                    </Link>
                                                 ) : (
-                                                    <div className="w-full h-full flex flex-col items-center justify-center text-emerald-800/20">
-                                                        <ShoppingBag size={48} />
+                                                    <div className="flex flex-col flex-grow">
+                                                        {cardContent}
                                                     </div>
                                                 )}
-
-                                                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[9px] font-black uppercase text-emerald-700 shadow-sm">
-                                                    {loja.bairro}
-                                                </div>
-
-                                                {/* Badge de Destaque Visual */}
-                                                {loja.destaque && (
-                                                    <div className="absolute top-4 left-4 bg-amber-400 text-amber-900 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm">
-                                                        Destaque
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            <div className="p-8 space-y-4 flex flex-col flex-grow">
-                                                <div>
-                                                    <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest mb-1">{loja.categoria}</p>
-                                                    <h3 className="text-xl font-black uppercase tracking-tighter text-[#1B3022] leading-none mb-2">{loja.nome}</h3>
-                                                    {/* Usando line-clamp-2 e um min-height para manter o padrão de altura dos cards */}
-                                                    <p className="text-gray-500 text-xs font-medium italic line-clamp-2 min-h-[32px]">{loja.descricao}</p>
-                                                </div>
-
-                                                <div className="pt-4 border-t border-emerald-50 mt-auto space-y-3">
-                                                    {/* Endereço Padronizado (Preto e Maior) */}
-                                                    <div className="flex items-start gap-2 text-black">
-                                                        <MapPin size={14} className="mt-0.5 text-emerald-600 flex-shrink-0" />
-                                                        <p className="text-sm font-bold leading-tight">{loja.endereco}</p>
-                                                    </div>
-
-                                                    <div className="flex gap-3 pt-2">
-                                                        <a href={`tel:${loja.telefone}`} className="flex items-center justify-center gap-1.5 text-[#1B3022] font-black text-[9px] uppercase bg-emerald-50 px-3 py-2 rounded-xl flex-1 hover:bg-emerald-100 transition-colors">
-                                                            <Phone size={12} className="text-emerald-500" /> Ligar
-                                                        </a>
-                                                        <a href={getWhatsappLink(loja.telefone)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5 text-white font-black text-[9px] uppercase bg-emerald-500 px-3 py-2 rounded-xl flex-[2] hover:bg-emerald-600 shadow-md transition-colors shadow-emerald-200">
-                                                            <MessageCircle size={12} /> WhatsApp
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    ))}
+                                            </motion.div>
+                                        );
+                                    })}
                                 </AnimatePresence>
                             </div>
                         )}

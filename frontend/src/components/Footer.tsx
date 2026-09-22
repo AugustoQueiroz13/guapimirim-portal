@@ -23,22 +23,28 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* Coluna 2: Utilidades e Negócios */}
+                {/* Coluna 2: Navegação e Negócios */}
                 <div className="space-y-4">
-                    <h4 className="text-white font-bold text-sm uppercase tracking-widest">Utilidades</h4>
-                    <ul className="space-y-3 text-sm font-medium">
-                        <li><Link href="/transporte" className="hover:text-emerald-400 transition-colors flex items-center gap-2">• Horários de Ônibus</Link></li>
-                        <li><Link href="/turismo" className="hover:text-emerald-400 transition-colors flex items-center gap-2">• Pontos Turísticos</Link></li>
+                    <h4 className="text-white font-bold text-sm uppercase tracking-widest">Navegação</h4>
+                    <ul className="grid grid-cols-2 gap-y-3 gap-x-4 text-sm font-medium">
+                        <li><Link href="/" className="hover:text-emerald-400 transition-colors flex items-center gap-2">• Início</Link></li>
+                        <li><Link href="/a-cidade" className="hover:text-emerald-400 transition-colors flex items-center gap-2">• A Cidade</Link></li>
+                        <li><Link href="/como-chegar" className="hover:text-emerald-400 transition-colors flex items-center gap-2">• Como Chegar</Link></li>
+                        <li><Link href="/horarios" className="hover:text-emerald-400 transition-colors flex items-center gap-2">• Transporte</Link></li>
+                        <li><Link href="/hospedagem" className="hover:text-emerald-400 transition-colors flex items-center gap-2">• Hospedagem</Link></li>
+                        <li><Link href="/gastronomia" className="hover:text-emerald-400 transition-colors flex items-center gap-2">• Gastronomia</Link></li>
+                        <li><Link href="/comercio" className="hover:text-emerald-400 transition-colors flex items-center gap-2">• Comércio</Link></li>
+                        <li><Link href="/turismo" className="hover:text-emerald-400 transition-colors flex items-center gap-2">• Turismo</Link></li>
                         <li><Link href="/telefones-uteis" className="hover:text-emerald-400 transition-colors flex items-center gap-2">• Telefones Úteis</Link></li>
-
-                        {/* Link de Monetização em Destaque */}
-                        <li className="pt-2">
-                            <Link href="/anuncie" className="text-emerald-400 font-black flex items-center gap-2 hover:text-white transition-colors group">
-                                <Megaphone className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-                                ANUNCIE NO PORTAL
-                            </Link>
-                        </li>
                     </ul>
+
+                    {/* Link de Monetização em Destaque */}
+                    <div className="pt-4">
+                        <Link href="/anuncie" className="text-emerald-400 font-black flex items-center gap-2 hover:text-white transition-colors group">
+                            <Megaphone className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                            ANUNCIE NO PORTAL
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Coluna 3: Localização */}
@@ -58,9 +64,12 @@ export default function Footer() {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/5 text-center">
+            <div className="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/5 text-center flex flex-col md:flex-row justify-between items-center gap-4">
                 <p className="text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">
-                    © 2026 Guia Guapimirim • Desenvolvido por Augusto Queiroz
+                    © 2026 Guia Guapimirim • Todos os direitos reservados.
+                </p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] opacity-60">
+                    Desenvolvido por <a href="https://augustoqueiroz13.github.io/meu-portfolio/" target="_blank" rel="noopener noreferrer" className="text-emerald-400 hover:text-emerald-300 transition-colors">Eletrofox Tecnologia</a>
                 </p>
             </div>
         </footer>
